@@ -1,0 +1,11 @@
+{
+  "name": "rimbawan-bk-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-static.mjs",
+    "dev": "node server.mjs",
+    "check": "node --check prototype/assets/js/app.js && node --check server.mjs && node --check scripts/build-static.mjs"
+  }
+}

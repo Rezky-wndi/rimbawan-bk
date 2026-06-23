@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RIMBAWAN BK — Profil Siswa</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{
+  --forest-950:#082D20;--forest-900:#0C3D2D;--forest-800:#11533C;--forest-700:#176C4A;--forest-600:#1F8759;
+  --forest-100:#E7F5ED;--forest-50:#F4FAF6;--gold:#D7AA4D;--gold-light:#F4DFAD;
+  --bg:#F2F6F3;--surface:#FFFFFF;--text:#17231E;--text-2:#66776F;--border:#DCE6E0;
+  --danger:#C63C3C;--warning:#D58B20;--info:#2F75B5;
+  --ok-bg:#E7F5ED;--ok-fg:#166B47;--warn-bg:#FAF1DF;--warn-fg:#9A6B16;
+  --danger-bg:#FBEBEB;--danger-fg:#B23636;--info-bg:#E9F1F9;--info-fg:#2A6AA6;
+  --muted-bg:#EDF1EF;--muted-fg:#66776F;
+  --shadow-sm:0 1px 2px rgba(8,45,32,.06);--radius:17px;--radius-sm:11px;--sidebar-w:280px;
+  --font:'Inter',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+
+.app{display:grid;grid-template-columns:var(--sidebar-w) 1fr;min-height:100vh}
+
+/* Sidebar (sama dengan dashboard) */
+.sidebar{background:linear-gradient(180deg,var(--forest-900),var(--forest-950));color:#D7E6DC;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;z-index:40}
+.brand{display:flex;align-items:center;gap:12px;padding:22px 22px 20px;border-bottom:1px solid rgba(255,255,255,.07)}
+.brand .logo{width:42px;height:42px;flex:none;border-radius:12px;background:linear-gradient(150deg,var(--forest-600),var(--forest-700));display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.brand .logo svg{width:24px;height:24px}
+.brand .name{font-size:16px;font-weight:800;color:#fff;line-height:1.1}
+.brand .name small{display:block;font-size:10.5px;font-weight:500;color:var(--gold-light);letter-spacing:1.4px;text-transform:uppercase;margin-top:3px}
+.nav{padding:14px;overflow-y:auto;flex:1}
+.nav-group{font-size:10.5px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:#7FA091;padding:14px 12px 8px}
+.nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:#C4D9CE;font-weight:500;font-size:13.5px;margin-bottom:2px;position:relative}
+.nav a i{width:18px;text-align:center;font-size:14.5px;color:#88A89A}
+.nav a:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav a.active{background:rgba(31,135,89,.22);color:#fff}
+.nav a.active i{color:var(--gold)}
+.nav a.active::before{content:"";position:absolute;left:-14px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--gold)}
+.nav a .lock{margin-left:auto;font-size:10.5px;color:#6E8E80}
+.nav a .pill{margin-left:auto;background:var(--gold);color:var(--forest-950);font-size:10.5px;font-weight:700;border-radius:20px;padding:1px 7px}
+.sidebar-foot{padding:14px;border-top:1px solid rgba(255,255,255,.07)}
+.userbox{display:flex;align-items:center;gap:11px;padding:8px 6px;border-radius:11px}
+.userbox .av{width:36px;height:36px;border-radius:50%;background:var(--forest-700);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.userbox .meta b{display:block;color:#fff;font-size:13px;font-weight:600}
+.userbox .meta span{font-size:11px;color:#88A89A}
+
+.main{display:flex;flex-direction:column;min-width:0}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 26px;height:64px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:30}
+.hamburger{display:none;font-size:18px;color:var(--text-2);width:38px;height:38px;border-radius:9px}
+.crumb{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-2);flex-wrap:wrap}
+.crumb b{color:var(--text);font-weight:600}
+.crumb i{font-size:9px;opacity:.6}
+.crumb a:hover{color:var(--forest-700)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.role-tag{display:inline-flex;align-items:center;gap:7px;background:var(--forest-50);border:1px solid var(--border);border-radius:9px;padding:7px 12px;font-size:12px;font-weight:600;color:var(--forest-800)}
+.role-tag i{color:var(--forest-600)}
+.iconbtn{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;color:var(--text-2);background:var(--bg);border:1px solid var(--border);position:relative}
+.iconbtn .dot{position:absolute;top:8px;right:9px;width:8px;height:8px;border-radius:50%;background:var(--danger);border:2px solid var(--surface)}
+
+.content{padding:26px;max-width:1240px;width:100%;margin:0 auto}
+
+/* ===== Hero identitas ===== */
+.hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:18px}
+.hero-band{height:74px;background:linear-gradient(110deg,var(--forest-800),var(--forest-600))}
+.hero-body{padding:0 26px 22px;display:flex;gap:22px;flex-wrap:wrap}
+.avatar{width:104px;height:104px;border-radius:22px;background:var(--forest-100);border:4px solid var(--surface);margin-top:-46px;display:grid;place-items:center;font-size:38px;font-weight:800;color:var(--forest-700);flex:none;box-shadow:var(--shadow-sm)}
+.hero-main{flex:1;min-width:240px;padding-top:14px}
+.hero-main h1{font-size:24px;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hero-meta{display:flex;gap:8px 18px;flex-wrap:wrap;margin-top:9px;color:var(--text-2);font-size:13px}
+.hero-meta span{display:inline-flex;align-items:center;gap:7px}
+.hero-meta i{color:var(--forest-600);font-size:12px;width:14px;text-align:center}
+.hero-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.hero-actions{display:flex;flex-direction:column;gap:9px;padding-top:14px;align-items:flex-end}
+.action-row{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:13px;border-radius:10px;padding:9px 15px;transition:.15s}
+.btn-primary{background:var(--forest-700);color:#fff;box-shadow:0 4px 12px rgba(23,108,74,.22)}
+.btn-primary:hover{background:var(--forest-800)}
+.btn-ghost{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:#C5D6CC;background:var(--forest-50)}
+
+/* Metric chips dalam hero */
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;border-top:1px solid var(--border);margin:18px 26px 0;padding-top:18px}
+.hstat{display:flex;align-items:center;gap:12px}
+.hstat .ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:15px;flex:none}
+.hstat .lbl{font-size:11.5px;color:var(--text-2)}
+.hstat .val{font-size:20px;font-weight:800;letter-spacing:-.5px;line-height:1.1}
+.ic.green{background:var(--forest-100);color:var(--forest-700)}.ic.amber{background:var(--warn-bg);color:var(--warning)}
+.ic.red{background:var(--danger-bg);color:var(--danger)}.ic.blue{background:var(--info-bg);color:var(--info)}
+
+/* Badge */
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:4px 11px;border-radius:20px;white-space:nowrap}
+.badge i{font-size:8px}
+.badge.ok{background:var(--ok-bg);color:var(--ok-fg)}.badge.warn{background:var(--warn-bg);color:var(--warn-fg)}
+.badge.danger{background:var(--danger-bg);color:var(--danger-fg)}.badge.info{background:var(--info-bg);color:var(--info-fg)}
+.badge.muted{background:var(--muted-bg);color:var(--muted-fg)}
+.badge.lock{background:#F3EFE3;color:#8a6410}
+
+/* ===== Tabs ===== */
+.tabs-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden}
+.tabs{display:flex;gap:2px;padding:8px 10px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:thin}
+.tab{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:9px;font-size:13px;font-weight:600;color:var(--text-2);white-space:nowrap;transition:.12s}
+.tab i{font-size:13px}
+.tab .lk{font-size:10px;color:var(--gold);margin-left:1px}
+.tab:hover{background:var(--bg);color:var(--text)}
+.tab.active{background:var(--forest-700);color:#fff}
+.tab.active .lk{color:var(--gold-light)}
+.tab .cnt{background:rgba(0,0,0,.08);font-size:10.5px;font-weight:700;border-radius:20px;padding:0 7px;margin-left:2px}
+.tab.active .cnt{background:rgba(255,255,255,.22)}
+
+.panel{display:none;padding:24px 26px}
+.panel.active{display:block}
+.panel-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.panel-title h2{font-size:17px;font-weight:700}
+.panel-title p{font-size:12.5px;color:var(--text-2);margin-top:2px}
+
+/* Field grid (biodata) */
+.fieldset-label{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--forest-700);margin:22px 0 12px;display:flex;align-items:center;gap:8px}
+.fieldset-label:first-child{margin-top:0}
+.fieldset-label::after{content:"";flex:1;height:1px;background:var(--border)}
+.fields{display:grid;grid-template-columns:repeat(3,1fr);gap:16px 26px}
+.field .k{font-size:11.5px;color:var(--text-2);margin-bottom:3px}
+.field .v{font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px}
+.field .v .mask-btn{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;color:var(--text-2);background:var(--bg);border:1px solid var(--border);font-size:10px}
+.field .v .mask-btn:hover{color:var(--forest-700)}
+.field.full{grid-column:1/-1}
+.field .v.lockval{color:var(--text-2)}
+
+/* Locked / restricted panel */
+.lock-banner{display:flex;align-items:flex-start;gap:12px;background:#FBF7EC;border:1px solid #ECE0C2;border-left:3px solid var(--gold);border-radius:12px;padding:13px 16px;margin-bottom:20px;font-size:12.5px;color:#7a5e1f}
+.lock-banner i{color:var(--gold);font-size:15px;margin-top:1px}
+.lock-banner b{color:#6b5217}
+.confidential-box{border:1.5px dashed #E0CFA0;background:#FCFAF3;border-radius:14px;padding:26px;text-align:center}
+.confidential-box .big{width:54px;height:54px;border-radius:14px;background:#F3EAD2;color:#9A6B16;display:grid;place-items:center;font-size:22px;margin:0 auto 14px}
+.confidential-box h3{font-size:15px;font-weight:700;margin-bottom:5px}
+.confidential-box p{font-size:12.5px;color:var(--text-2);max-width:420px;margin:0 auto 16px}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text-2);padding:0 14px 11px;border-bottom:1px solid var(--border)}
+.tbl td{padding:13px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover{background:var(--forest-50)}
+.tbl .num{font-variant-numeric:tabular-nums;font-weight:600}
+.below{color:var(--danger);font-weight:700}
+.above{color:var(--forest-600);font-weight:600}
+
+/* Mini stat row */
+.mini-stats{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px}
+.mini{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:13px 14px}
+.mini .n{font-size:22px;font-weight:800;letter-spacing:-.5px}
+.mini .l{font-size:11px;color:var(--text-2);margin-top:2px}
+.mini.alert{background:var(--danger-bg);border-color:#F0D2D2}
+.mini.alert .n{color:var(--danger)}
+.mini.warn{background:var(--warn-bg);border-color:#EBDCBB}
+.mini.warn .n{color:var(--warn-fg)}
+
+/* Doc list */
+.doc{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--border);border-radius:12px;margin-bottom:10px}
+.doc:last-child{margin-bottom:0}
+.doc .ic{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:16px;flex:none;background:var(--info-bg);color:var(--info)}
+.doc .ic.lock{background:#F3EFE3;color:#9A6B16}
+.doc .info{flex:1;min-width:0}
+.doc .info b{font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:7px}
+.doc .info span{font-size:11.5px;color:var(--text-2)}
+.doc .open{font-size:12.5px;font-weight:600;color:var(--forest-700);display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:9px;border:1px solid var(--border)}
+.doc .open:hover{background:var(--forest-50)}
+
+/* Alert note */
+.note{display:flex;align-items:flex-start;gap:11px;border-radius:12px;padding:13px 16px;font-size:12.5px;margin-bottom:20px}
+.note i{font-size:14px;margin-top:1px}
+.note.warn{background:var(--warn-bg);border:1px solid #EBDCBB;color:var(--warn-fg)}
+.note.info{background:var(--info-bg);border:1px solid #D3E3F2;color:var(--info-fg)}
+.note b{font-weight:700}
+
+/* Timeline (konseling status / generic) */
+.list-row{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--border);border-radius:12px;margin-bottom:10px}
+.list-row:last-child{margin-bottom:0}
+.list-row .dt{width:46px;text-align:center;flex:none}
+.list-row .dt .d{font-size:18px;font-weight:800;line-height:1}
+.list-row .dt .m{font-size:10.5px;color:var(--text-2);text-transform:uppercase}
+.list-row .body{flex:1;min-width:0}
+.list-row .body b{font-size:13.5px;font-weight:600;display:block}
+.list-row .body span{font-size:11.5px;color:var(--text-2)}
+.list-row .right{display:flex;align-items:center;gap:10px}
+
+/* Empty state */
+.empty{text-align:center;padding:42px 20px}
+.empty .ic{width:60px;height:60px;border-radius:16px;background:var(--bg);color:var(--text-2);display:grid;place-items:center;font-size:24px;margin:0 auto 14px}
+.empty h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.empty p{font-size:12.5px;color:var(--text-2);max-width:360px;margin:0 auto}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--forest-900);color:#fff;padding:12px 18px;border-radius:11px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(8,45,32,.3);opacity:0;pointer-events:none;transition:.25s;z-index:80}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast i{color:var(--gold-light)}
+
+.backdrop{display:none;position:fixed;inset:0;background:rgba(8,45,32,.45);z-index:35}
+
+@media(max-width:1000px){.fields{grid-template-columns:repeat(2,1fr)}.hero-stats{grid-template-columns:repeat(2,1fr)}.mini-stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:820px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:fixed;left:0;top:0;width:var(--sidebar-w);transform:translateX(-100%);transition:transform .25s}
+  .app.open .sidebar{transform:translateX(0)}.app.open .backdrop{display:block}
+  .hamburger{display:grid;place-items:center}.role-tag{display:none}
+  .content{padding:16px}.hero-actions{align-items:stretch;width:100%}.action-row{justify-content:flex-start}
+}
+@media(max-width:560px){.fields{grid-template-columns:1fr}.mini-stats{grid-template-columns:repeat(2,1fr)}.hero-stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="backdrop" onclick="toggleNav()"></div>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 21V12" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M12 12C12 9.2 9.8 7 7 7C7 9.8 9.2 12 12 12Z" fill="#F4DFAD"/>
+          <path d="M12 11C12 8.5 14 6.5 16.5 6.5C16.5 9 14.5 11 12 11Z" fill="#fff"/>
+          <path d="M5 21H19" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="name">RIMBAWAN<small>BK</small></div>
+    </div>
+    <nav class="nav">
+      <a href="#"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      <div class="nav-group">Data &amp; Akademik</div>
+      <a href="#" class="active"><i class="fa-solid fa-user-graduate"></i> Data Siswa</a>
+      <a href="#"><i class="fa-solid fa-people-roof"></i> Orang Tua / Wali</a>
+      <a href="#"><i class="fa-solid fa-calendar-check"></i> Absensi</a>
+      <a href="#"><i class="fa-solid fa-chart-simple"></i> Nilai Akademik</a>
+      <div class="nav-group">Layanan BK</div>
+      <a href="#"><i class="fa-solid fa-triangle-exclamation"></i> Pelanggaran &amp; Poin</a>
+      <a href="#"><i class="fa-solid fa-comments"></i> Konseling <span class="lock"><i class="fa-solid fa-lock"></i></span></a>
+      <a href="#"><i class="fa-solid fa-clipboard-list"></i> Asesmen BK</a>
+      <a href="#"><i class="fa-solid fa-house-chimney-user"></i> Home Visit</a>
+      <a href="#"><i class="fa-solid fa-envelope-open-text"></i> Surat Panggilan</a>
+      <a href="#"><i class="fa-solid fa-shield-halved"></i> Layanan Aduan</a>
+      <div class="nav-group">Lainnya</div>
+      <a href="#"><i class="fa-solid fa-file-lines"></i> Laporan</a>
+      <a href="#"><i class="fa-solid fa-box-archive"></i> Arsip</a>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="userbox"><div class="av">SP</div><div class="meta"><b>Sri Pamungkas, S.Pd</b><span>Guru BK</span></div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="hamburger" onclick="toggleNav()" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+      <nav class="crumb"><a href="#">Beranda</a> <i class="fa-solid fa-chevron-right"></i> <a href="#">Data Siswa</a> <i class="fa-solid fa-chevron-right"></i> <b>Andi Pratama</b></nav>
+      <div class="topbar-right">
+        <span class="role-tag"><i class="fa-solid fa-user-shield"></i> Akses: Guru BK</span>
+        <button class="iconbtn" aria-label="Notifikasi"><i class="fa-regular fa-bell"></i><span class="dot"></span></button>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero-band"></div>
+        <div class="hero-body">
+          <div class="avatar">AP</div>
+          <div class="hero-main">
+            <h1>Andi Pratama <span class="badge ok"><i class="fa-solid fa-circle"></i> Siswa Aktif</span></h1>
+            <div class="hero-meta">
+              <span><i class="fa-solid fa-id-card"></i> NIS 2324.10.0042</span>
+              <span><i class="fa-solid fa-graduation-cap"></i> XI TKJ</span>
+              <span><i class="fa-solid fa-building"></i> Asrama Meranti · Kamar 04</span>
+              <span><i class="fa-solid fa-venus-mars"></i> Laki-laki</span>
+            </div>
+            <div class="hero-badges">
+              <span class="badge danger"><i class="fa-solid fa-circle"></i> Risiko Tinggi</span>
+              <span class="badge warn"><i class="fa-solid fa-circle"></i> Tahap: Panggilan Orang Tua</span>
+              <span class="badge info"><i class="fa-solid fa-circle"></i> Pendampingan Aktif</span>
+            </div>
+          </div>
+          <div class="hero-actions">
+            <div class="action-row">
+              <button class="btn btn-ghost"><i class="fa-solid fa-pen"></i> Edit Data</button>
+              <button class="btn btn-ghost" onclick="toast('Membuka dialog cetak profil…')"><i class="fa-solid fa-print"></i> Cetak</button>
+            </div>
+            <div class="action-row">
+              <button class="btn btn-primary"><i class="fa-solid fa-comment-medical"></i> Catat Konseling</button>
+            </div>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="hstat"><div class="ic red"><i class="fa-solid fa-calendar-check"></i></div><div><div class="lbl">Kehadiran</div><div class="val" style="color:var(--danger)">71%</div></div></div>
+          <div class="hstat"><div class="ic amber"><i class="fa-solid fa-scale-balanced"></i></div><div><div class="lbl">Total Poin</div><div class="val" style="color:var(--warn-fg)">118</div></div></div>
+          <div class="hstat"><div class="ic blue"><i class="fa-solid fa-comments"></i></div><div><div class="lbl">Sesi Konseling</div><div class="val">3</div></div></div>
+          <div class="hstat"><div class="ic amber"><i class="fa-solid fa-chart-line"></i></div><div><div class="lbl">Mapel di bawah KKM</div><div class="val" style="color:var(--warn-fg)">2</div></div></div>
+        </div>
+      </section>
+
+      <!-- TABS -->
+      <section class="tabs-wrap">
+        <div class="tabs" role="tablist">
+          <button class="tab active" onclick="showTab(event,'biodata')"><i class="fa-solid fa-user"></i> Biodata</button>
+          <button class="tab" onclick="showTab(event,'keluarga')"><i class="fa-solid fa-people-roof"></i> Keluarga <span class="lk"><i class="fa-solid fa-lock"></i></span></button>
+          <button class="tab" onclick="showTab(event,'dokumen')"><i class="fa-solid fa-folder"></i> Dokumen</button>
+          <button class="tab" onclick="showTab(event,'absensi')"><i class="fa-solid fa-calendar-check"></i> Absensi</button>
+          <button class="tab" onclick="showTab(event,'nilai')"><i class="fa-solid fa-chart-simple"></i> Nilai</button>
+          <button class="tab" onclick="showTab(event,'pelanggaran')"><i class="fa-solid fa-triangle-exclamation"></i> Pelanggaran <span class="cnt">4</span></button>
+          <button class="tab" onclick="showTab(event,'konseling')"><i class="fa-solid fa-comments"></i> Konseling <span class="lk"><i class="fa-solid fa-lock"></i></span></button>
+          <button class="tab" onclick="showTab(event,'asesmen')"><i class="fa-solid fa-clipboard-list"></i> Asesmen</button>
+          <button class="tab" onclick="showTab(event,'homevisit')"><i class="fa-solid fa-house-chimney-user"></i> Home Visit</button>
+          <button class="tab" onclick="showTab(event,'surat')"><i class="fa-solid fa-envelope-open-text"></i> Surat</button>
+          <button class="tab" onclick="showTab(event,'aduan')"><i class="fa-solid fa-shield-halved"></i> Aduan</button>
+        </div>
+
+        <!-- BIODATA -->
+        <div class="panel active" id="biodata">
+          <div class="panel-title"><div><h2>Biodata Siswa</h2><p>Data pribadi dan akademik</p></div></div>
+          <div class="fieldset-label">Identitas Pribadi</div>
+          <div class="fields">
+            <div class="field"><div class="k">Nama Lengkap</div><div class="v">Andi Pratama</div></div>
+            <div class="field"><div class="k">Nama Panggilan</div><div class="v">Andi</div></div>
+            <div class="field"><div class="k">Jenis Kelamin</div><div class="v">Laki-laki</div></div>
+            <div class="field"><div class="k">NIS</div><div class="v">2324.10.0042</div></div>
+            <div class="field"><div class="k">NISN</div><div class="v">0098765432</div></div>
+            <div class="field"><div class="k">NIK <i class="fa-solid fa-lock" style="font-size:10px;color:var(--gold)"></i></div><div class="v"><span data-mask="7371••••••••0007" data-full="7371091203080007">7371••••••••0007</span><button class="mask-btn" onclick="toggleMask(this)" aria-label="Tampilkan"><i class="fa-regular fa-eye"></i></button></div></div>
+            <div class="field"><div class="k">Tempat Lahir</div><div class="v">Makassar</div></div>
+            <div class="field"><div class="k">Tanggal Lahir</div><div class="v">12 Maret 2008</div></div>
+            <div class="field"><div class="k">Agama</div><div class="v">Islam</div></div>
+          </div>
+          <div class="fieldset-label">Kontak</div>
+          <div class="fields">
+            <div class="field full"><div class="k">Alamat</div><div class="v">Jl. Perintis Kemerdekaan No. 21, Tamalanrea, Makassar, Sulawesi Selatan</div></div>
+            <div class="field"><div class="k">Nomor Telepon <i class="fa-solid fa-lock" style="font-size:10px;color:var(--gold)"></i></div><div class="v"><span data-mask="0812-••••-7890" data-full="0812-3456-7890">0812-••••-7890</span><button class="mask-btn" onclick="toggleMask(this)" aria-label="Tampilkan"><i class="fa-regular fa-eye"></i></button></div></div>
+            <div class="field"><div class="k">Email <i class="fa-solid fa-lock" style="font-size:10px;color:var(--gold)"></i></div><div class="v"><span data-mask="a•••••@email.com" data-full="andi.pratama@email.com">a•••••@email.com</span><button class="mask-btn" onclick="toggleMask(this)" aria-label="Tampilkan"><i class="fa-regular fa-eye"></i></button></div></div>
+          </div>
+          <div class="fieldset-label">Akademik &amp; Asrama</div>
+          <div class="fields">
+            <div class="field"><div class="k">Tahun Masuk</div><div class="v">2023</div></div>
+            <div class="field"><div class="k">Kelas</div><div class="v">XI TKJ</div></div>
+            <div class="field"><div class="k">Status Siswa</div><div class="v"><span class="badge ok"><i class="fa-solid fa-circle"></i> Aktif</span></div></div>
+            <div class="field"><div class="k">Status Asrama</div><div class="v">Tinggal di Asrama</div></div>
+            <div class="field"><div class="k">Nama Asrama</div><div class="v">Meranti</div></div>
+            <div class="field"><div class="k">Nomor Kamar</div><div class="v">04</div></div>
+          </div>
+          <div class="fieldset-label">Minat &amp; Aspirasi</div>
+          <div class="fields">
+            <div class="field"><div class="k">Hobi &amp; Minat</div><div class="v">Sepak bola, elektronika</div></div>
+            <div class="field"><div class="k">Cita-cita</div><div class="v">Teknisi jaringan</div></div>
+          </div>
+          <div class="fieldset-label">Catatan Awal BK</div>
+          <div class="fields"><div class="field full"><div class="v" style="font-weight:400;color:var(--text-2);line-height:1.6">Siswa pindahan dari kelas X dengan adaptasi asrama yang masih berlangsung. Orang tua bekerja di luar kota sehingga komunikasi keluarga terbatas. Memerlukan pendampingan pada bidang belajar dan kedisiplinan.</div></div></div>
+        </div>
+
+        <!-- KELUARGA (locked) -->
+        <div class="panel" id="keluarga">
+          <div class="panel-title"><div><h2>Data Keluarga</h2><p>Informasi orang tua / wali</p></div><span class="badge lock"><i class="fa-solid fa-lock"></i> Khusus Guru BK</span></div>
+          <div class="lock-banner"><i class="fa-solid fa-shield-halved"></i><div><b>Data keluarga bersifat privat.</b> Bagian ini hanya dapat dilihat oleh Guru BK dan tidak ditampilkan kepada wali kelas, guru mata pelajaran, maupun kepala sekolah.</div></div>
+          <div class="fieldset-label">Ayah</div>
+          <div class="fields">
+            <div class="field"><div class="k">Nama Ayah</div><div class="v">Bambang Pratama</div></div>
+            <div class="field"><div class="k">Pekerjaan</div><div class="v">Wiraswasta</div></div>
+            <div class="field"><div class="k">Pendidikan</div><div class="v">SMA</div></div>
+            <div class="field"><div class="k">No. Telepon <i class="fa-solid fa-lock" style="font-size:10px;color:var(--gold)"></i></div><div class="v"><span data-mask="0813-••••-2211" data-full="0813-7788-2211">0813-••••-2211</span><button class="mask-btn" onclick="toggleMask(this)"><i class="fa-regular fa-eye"></i></button></div></div>
+          </div>
+          <div class="fieldset-label">Ibu</div>
+          <div class="fields">
+            <div class="field"><div class="k">Nama Ibu</div><div class="v">Siti Aminah</div></div>
+            <div class="field"><div class="k">Pekerjaan</div><div class="v">Ibu Rumah Tangga</div></div>
+            <div class="field"><div class="k">Pendidikan</div><div class="v">SMP</div></div>
+            <div class="field"><div class="k">No. Telepon <i class="fa-solid fa-lock" style="font-size:10px;color:var(--gold)"></i></div><div class="v"><span data-mask="0852-••••-3344" data-full="0852-9900-3344">0852-••••-3344</span><button class="mask-btn" onclick="toggleMask(this)"><i class="fa-regular fa-eye"></i></button></div></div>
+          </div>
+          <div class="fieldset-label">Wali &amp; Kontak Darurat</div>
+          <div class="fields">
+            <div class="field"><div class="k">Nama Wali</div><div class="v" style="color:var(--text-2);font-weight:400">— (orang tua kandung)</div></div>
+            <div class="field"><div class="k">Kontak Darurat</div><div class="v">Bambang Pratama (Ayah)</div></div>
+            <div class="field"><div class="k">Preferensi Notifikasi</div><div class="v"><span class="badge ok"><i class="fa-brands fa-whatsapp"></i> WhatsApp</span></div></div>
+          </div>
+          <div class="fieldset-label">Kondisi Keluarga yang Relevan</div>
+          <div class="fields"><div class="field full"><div class="v" style="font-weight:400;color:var(--text-2);line-height:1.6">Kedua orang tua bekerja di luar kota (Balikpapan). Siswa tinggal di asrama sepanjang tahun ajaran dan pulang saat libur panjang. Komunikasi dengan orang tua sebagian besar melalui telepon.</div></div></div>
+        </div>
+
+        <!-- DOKUMEN -->
+        <div class="panel" id="dokumen">
+          <div class="panel-title"><div><h2>Dokumen</h2><p>Berkas siswa — dokumen sensitif memerlukan konfirmasi</p></div><button class="btn btn-ghost"><i class="fa-solid fa-upload"></i> Tambah Dokumen</button></div>
+          <div class="doc">
+            <div class="ic lock"><i class="fa-solid fa-id-card"></i></div>
+            <div class="info"><b>Kartu Keluarga <span class="badge lock"><i class="fa-solid fa-lock"></i> Sensitif</span></b><span>PDF · 1,2 MB · diunggah 14 Jul 2023</span></div>
+            <button class="open" onclick="toast('Konfirmasi diperlukan. Akses dokumen sensitif dicatat di audit log.')"><i class="fa-solid fa-lock"></i> Buka</button>
+          </div>
+          <div class="doc">
+            <div class="ic lock"><i class="fa-solid fa-file-contract"></i></div>
+            <div class="info"><b>Akta Kelahiran <span class="badge lock"><i class="fa-solid fa-lock"></i> Sensitif</span></b><span>PDF · 0,9 MB · diunggah 14 Jul 2023</span></div>
+            <button class="open" onclick="toast('Konfirmasi diperlukan. Akses dokumen sensitif dicatat di audit log.')"><i class="fa-solid fa-lock"></i> Buka</button>
+          </div>
+          <div class="doc">
+            <div class="ic"><i class="fa-solid fa-certificate"></i></div>
+            <div class="info"><b>Ijazah SMP <span class="badge ok"><i class="fa-solid fa-circle"></i> Terverifikasi</span></b><span>PDF · 1,1 MB · diunggah 14 Jul 2023</span></div>
+            <button class="open"><i class="fa-regular fa-eye"></i> Lihat</button>
+          </div>
+          <div class="doc">
+            <div class="ic"><i class="fa-solid fa-image"></i></div>
+            <div class="info"><b>Pas Foto</b><span>JPG · 320 KB · diunggah 14 Jul 2023</span></div>
+            <button class="open"><i class="fa-regular fa-eye"></i> Lihat</button>
+          </div>
+        </div>
+
+        <!-- ABSENSI -->
+        <div class="panel" id="absensi">
+          <div class="panel-title"><div><h2>Absensi</h2><p>Rekap kehadiran semester berjalan</p></div><span class="badge danger"><i class="fa-solid fa-circle"></i> Kehadiran 71%</span></div>
+          <div class="note warn"><i class="fa-solid fa-triangle-exclamation"></i><div><b>Peringatan dini:</b> Terdeteksi alfa berulang (8 kali) dan keterlambatan berulang (5 kali). Sistem merekomendasikan pendampingan kedisiplinan.</div></div>
+          <div class="mini-stats">
+            <div class="mini"><div class="n">128</div><div class="l">Hadir</div></div>
+            <div class="mini"><div class="n">3</div><div class="l">Izin</div></div>
+            <div class="mini"><div class="n">2</div><div class="l">Sakit</div></div>
+            <div class="mini alert"><div class="n">8</div><div class="l">Alfa</div></div>
+            <div class="mini warn"><div class="n">5</div><div class="l">Terlambat</div></div>
+            <div class="mini"><div class="n">1</div><div class="l">Dispensasi</div></div>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Tanggal</th><th>Status</th><th>Keterangan</th></tr></thead>
+            <tbody>
+              <tr><td>18 Jun 2026</td><td><span class="badge danger"><i class="fa-solid fa-circle"></i> Alfa</span></td><td style="color:var(--text-2)">Tanpa keterangan</td></tr>
+              <tr><td>17 Jun 2026</td><td><span class="badge warn"><i class="fa-solid fa-circle"></i> Terlambat</span></td><td style="color:var(--text-2)">Masuk pukul 07.40</td></tr>
+              <tr><td>16 Jun 2026</td><td><span class="badge ok"><i class="fa-solid fa-circle"></i> Hadir</span></td><td style="color:var(--text-2)">—</td></tr>
+              <tr><td>13 Jun 2026</td><td><span class="badge info"><i class="fa-solid fa-circle"></i> Izin</span></td><td style="color:var(--text-2)">Keperluan keluarga</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- NILAI -->
+        <div class="panel" id="nilai">
+          <div class="panel-title"><div><h2>Nilai Akademik</h2><p>Semester Genap 2025/2026 · KKM 75</p></div><span class="badge warn"><i class="fa-solid fa-circle"></i> 2 mapel di bawah KKM</span></div>
+          <div class="note info"><i class="fa-solid fa-circle-info"></i><div>Nilai rendah disertai kehadiran rendah menjadikan siswa <b>prioritas pendampingan</b>. Guru BK hanya membaca dan menganalisis nilai, tidak mengubahnya.</div></div>
+          <table class="tbl">
+            <thead><tr><th>Mata Pelajaran</th><th>KKM</th><th>Nilai Akhir</th><th>Predikat</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>Matematika</td><td class="num">75</td><td class="num below">68</td><td>D</td><td><span class="badge danger"><i class="fa-solid fa-circle"></i> Di bawah KKM</span></td></tr>
+              <tr><td>Bahasa Inggris</td><td class="num">75</td><td class="num below">70</td><td>C</td><td><span class="badge danger"><i class="fa-solid fa-circle"></i> Di bawah KKM</span></td></tr>
+              <tr><td>Bahasa Indonesia</td><td class="num">75</td><td class="num above">82</td><td>B</td><td><span class="badge ok"><i class="fa-solid fa-circle"></i> Tuntas</span></td></tr>
+              <tr><td>Produktif TKJ</td><td class="num">75</td><td class="num above">88</td><td>A</td><td><span class="badge ok"><i class="fa-solid fa-circle"></i> Tuntas</span></td></tr>
+              <tr><td>PKn</td><td class="num">75</td><td class="num above">79</td><td>B</td><td><span class="badge ok"><i class="fa-solid fa-circle"></i> Tuntas</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- PELANGGARAN -->
+        <div class="panel" id="pelanggaran">
+          <div class="panel-title"><div><h2>Pelanggaran &amp; Poin</h2><p>Riwayat poin tercatat di ledger</p></div><span class="badge warn"><i class="fa-solid fa-circle"></i> 118 poin · Tahap Panggilan Orang Tua</span></div>
+          <div class="note info"><i class="fa-solid fa-circle-info"></i><div>Ambang: <b>0–25</b> Aman · <b>26–50</b> Perlu Perhatian · <b>51–100</b> Konseling BK · <b>101–150</b> Panggilan Orang Tua · <b>151–200</b> Home Visit. Poin masuk setelah verifikasi; koreksi tercatat di ledger.</div></div>
+          <table class="tbl">
+            <thead><tr><th>Tanggal</th><th>Jenis Pelanggaran</th><th>Tingkat</th><th>Poin</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>17 Jun 2026</td><td>Terlambat masuk</td><td><span class="badge muted">Ringan</span></td><td class="num">+5</td><td><span class="badge ok"><i class="fa-solid fa-circle"></i> Terverifikasi</span></td></tr>
+              <tr><td>09 Jun 2026</td><td>Membolos pelajaran</td><td><span class="badge warn">Sedang</span></td><td class="num">+25</td><td><span class="badge ok"><i class="fa-solid fa-circle"></i> Terverifikasi</span></td></tr>
+              <tr><td>28 Mei 2026</td><td>Keluar asrama tanpa izin</td><td><span class="badge danger">Berat</span></td><td class="num">+50</td><td><span class="badge ok"><i class="fa-solid fa-circle"></i> Terverifikasi</span></td></tr>
+              <tr><td>15 Mei 2026</td><td>Tidak mengikuti apel</td><td><span class="badge warn">Sedang</span></td><td class="num">+38</td><td><span class="badge info"><i class="fa-solid fa-circle"></i> Diproses</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- KONSELING (restricted) -->
+        <div class="panel" id="konseling">
+          <div class="panel-title"><div><h2>Konseling</h2><p>Hanya status yang ditampilkan — isi bersifat sangat rahasia</p></div><span class="badge lock"><i class="fa-solid fa-lock"></i> Sangat Rahasia</span></div>
+          <div class="lock-banner"><i class="fa-solid fa-user-lock"></i><div><b>Isi konseling tidak ditampilkan di profil.</b> Hanya Guru BK berwenang yang dapat membuka catatan. Setiap pembukaan isi konseling dicatat di audit log. Wali kelas, orang tua, dan kepala sekolah hanya melihat status umum.</div></div>
+          <div class="list-row">
+            <div class="dt"><div class="d">11</div><div class="m">Jun</div></div>
+            <div class="body"><b>Konseling Individu — Bidang Belajar</b><span>Konselor: Sri Pamungkas · Tindak lanjut: Pendampingan akademik</span></div>
+            <div class="right"><span class="badge warn"><i class="fa-solid fa-circle"></i> Lanjutan</span><button class="open" onclick="toast('Membuka isi konseling. Akses dicatat di audit log.')"><i class="fa-solid fa-lock"></i> Buka Isi</button></div>
+          </div>
+          <div class="list-row">
+            <div class="dt"><div class="d">29</div><div class="m">Mei</div></div>
+            <div class="body"><b>Konseling Individu — Bidang Disiplin</b><span>Konselor: Sri Pamungkas · Tindak lanjut: Kontrak perilaku</span></div>
+            <div class="right"><span class="badge info"><i class="fa-solid fa-circle"></i> Diproses</span><button class="open" onclick="toast('Membuka isi konseling. Akses dicatat di audit log.')"><i class="fa-solid fa-lock"></i> Buka Isi</button></div>
+          </div>
+          <div class="list-row">
+            <div class="dt"><div class="d">16</div><div class="m">Mei</div></div>
+            <div class="body"><b>Konseling Individu — Bidang Pribadi</b><span>Konselor: Sri Pamungkas · Tindak lanjut: Monitoring Guru BK</span></div>
+            <div class="right"><span class="badge ok"><i class="fa-solid fa-circle"></i> Selesai</span><button class="open" onclick="toast('Membuka isi konseling. Akses dicatat di audit log.')"><i class="fa-solid fa-lock"></i> Buka Isi</button></div>
+          </div>
+        </div>
+
+        <!-- ASESMEN -->
+        <div class="panel" id="asesmen">
+          <div class="panel-title"><div><h2>Asesmen BK</h2><p>Hasil instrumen — bukan diagnosis</p></div></div>
+          <div class="note info"><i class="fa-solid fa-circle-info"></i><div>Hasil asesmen merupakan indikasi kebutuhan layanan, <b>bukan diagnosis</b>, dan harus dikonfirmasi Guru BK.</div></div>
+          <div class="list-row">
+            <div class="dt"><div class="d">05</div><div class="m">Jun</div></div>
+            <div class="body"><b>AKPD — Angket Kebutuhan Peserta Didik</b><span>Kebutuhan dominan: Bidang Belajar · Versi 2.1</span></div>
+            <div class="right"><span class="badge warn"><i class="fa-solid fa-circle"></i> Risiko Sedang</span></div>
+          </div>
+          <div class="list-row">
+            <div class="dt"><div class="d">20</div><div class="m">Feb</div></div>
+            <div class="body"><b>Adaptasi Asrama</b><span>Kebutuhan dominan: Penyesuaian sosial · Versi 1.0</span></div>
+            <div class="right"><span class="badge warn"><i class="fa-solid fa-circle"></i> Risiko Sedang</span></div>
+          </div>
+        </div>
+
+        <!-- HOME VISIT -->
+        <div class="panel" id="homevisit">
+          <div class="panel-title"><div><h2>Home Visit</h2><p>Riwayat kunjungan rumah</p></div></div>
+          <div class="list-row">
+            <div class="dt"><div class="d">25</div><div class="m">Jun</div></div>
+            <div class="body"><b>Kunjungan terkait kehadiran &amp; kedisiplinan</b><span>Petugas: Sri Pamungkas · Koordinasi dengan orang tua</span></div>
+            <div class="right"><span class="badge info"><i class="fa-solid fa-circle"></i> Terjadwal</span></div>
+          </div>
+          <div class="note warn" style="margin:16px 0 0"><i class="fa-solid fa-lock"></i><div>Dokumentasi dan hasil wawancara home visit hanya dapat dilihat oleh Guru BK.</div></div>
+        </div>
+
+        <!-- SURAT -->
+        <div class="panel" id="surat">
+          <div class="panel-title"><div><h2>Surat Panggilan</h2><p>Riwayat surat untuk orang tua / wali</p></div></div>
+          <div class="list-row">
+            <div class="dt"><div class="d">15</div><div class="m">Jun</div></div>
+            <div class="body"><b>SP-2026-014 — Panggilan Orang Tua</b><span>Pemicu: Akumulasi poin (118) · Dikirim via WhatsApp</span></div>
+            <div class="right"><span class="badge ok"><i class="fa-solid fa-circle"></i> Dikonfirmasi Hadir</span></div>
+          </div>
+          <div class="list-row">
+            <div class="dt"><div class="d">30</div><div class="m">Mei</div></div>
+            <div class="body"><b>SP-2026-009 — Pemberitahuan Kedisiplinan</b><span>Pemicu: Pelanggaran berat · Dikirim via WhatsApp</span></div>
+            <div class="right"><span class="badge info"><i class="fa-solid fa-circle"></i> Dibaca</span></div>
+          </div>
+        </div>
+
+        <!-- ADUAN (empty state) -->
+        <div class="panel" id="aduan">
+          <div class="panel-title"><div><h2>Aduan Terkait</h2><p>Laporan yang melibatkan siswa ini</p></div></div>
+          <div class="empty">
+            <div class="ic"><i class="fa-regular fa-folder-open"></i></div>
+            <h3>Tidak ada aduan terkait</h3>
+            <p>Belum ada laporan yang melibatkan siswa ini. Bukti dan identitas pelapor pada aduan hanya dapat diakses petugas berwenang.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"><i class="fa-solid fa-shield-halved"></i> <span id="toast-msg"></span></div>
+
+<script>
+function toggleNav(){document.getElementById('app').classList.toggle('open')}
+function showTab(e,id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  e.currentTarget.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+function toggleMask(btn){
+  const span=btn.parentElement.querySelector('span');
+  const icon=btn.querySelector('i');
+  const showing=span.textContent===span.dataset.full;
+  span.textContent=showing?span.dataset.mask:span.dataset.full;
+  icon.className=showing?'fa-regular fa-eye':'fa-regular fa-eye-slash';
+  if(!showing)toast('Data sensitif ditampilkan. Akses dicatat di audit log.');
+}
+let tT;
+function toast(msg){
+  clearTimeout(tT);
+  document.getElementById('toast-msg').textContent=msg;
+  document.getElementById('toast').classList.add('show');
+  tT=setTimeout(()=>document.getElementById('toast').classList.remove('show'),3200);
+}
+</script>
+</body>
+</html>

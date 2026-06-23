@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RIMBAWAN BK - Prototype Aplikasi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <button class="backdrop" data-close-nav aria-label="Tutup menu"></button>
+
+    <aside class="sidebar" aria-label="Navigasi utama">
+      <a class="brand" href="#dashboard" aria-label="RIMBAWAN BK">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 21V12" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M12 12C12 9.2 9.8 7 7 7C7 9.8 9.2 12 12 12Z" fill="#F4DFAD"/>
+            <path d="M12 11C12 8.5 14 6.5 16.5 6.5C16.5 9 14.5 11 12 11Z" fill="#fff"/>
+            <path d="M5 21H19" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="brand-text">RIMBAWAN<span>BK</span></span>
+      </a>
+
+      <nav class="nav">
+        <a href="#dashboard" data-route="dashboard"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+        <a href="#siswa" data-route="siswa"><i class="fa-solid fa-user-graduate"></i> Data Siswa</a>
+        <a href="#pelanggaran" data-route="pelanggaran"><i class="fa-solid fa-triangle-exclamation"></i> Pelanggaran & Poin</a>
+        <a href="#konseling" data-route="konseling"><i class="fa-solid fa-comments"></i> Konseling <span class="nav-lock"><i class="fa-solid fa-lock"></i></span></a>
+        <a href="#surat" data-route="surat"><i class="fa-solid fa-envelope-open-text"></i> Surat Panggilan</a>
+        <a href="#laporan" data-route="laporan"><i class="fa-solid fa-file-lines"></i> Laporan</a>
+        <a href="#kode-akses" data-route="kode-akses"><i class="fa-solid fa-key"></i> Kode Akses</a>
+        <a href="#audit" data-route="audit"><i class="fa-solid fa-shield-halved"></i> Audit Akses</a>
+      </nav>
+
+      <div class="sidebar-foot">
+        <div class="userbox">
+          <span id="currentUserInitials">SP</span>
+          <div>
+            <strong id="currentUserName">Sri Pamungkas, S.Pd</strong>
+            <small id="currentUserRole">Guru BK</small>
+          </div>
+        </div>
+        <button class="logout-button" id="logoutButton" type="button">
+          <i class="fa-solid fa-right-from-bracket"></i> Keluar
+        </button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-button menu-button" data-open-nav aria-label="Buka menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="topbar-title">
+          <span id="breadcrumb">Dashboard</span>
+          <strong>RIMBAWAN BK</strong>
+        </div>
+        <label class="global-search" for="globalSearch">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input id="globalSearch" type="search" placeholder="Cari siswa, asrama, status, atau kasus">
+        </label>
+        <button class="icon-button" id="notificationButton" aria-label="Notifikasi">
+          <i class="fa-regular fa-bell"></i>
+          <span class="notice-dot"></span>
+        </button>
+      </header>
+
+      <div class="content">
+        <section id="view-login" class="view"></section>
+        <section id="view-dashboard" class="view"></section>
+        <section id="view-siswa" class="view"></section>
+        <section id="view-profil" class="view"></section>
+        <section id="view-pelanggaran" class="view"></section>
+        <section id="view-konseling" class="view"></section>
+        <section id="view-surat" class="view"></section>
+        <section id="view-laporan" class="view"></section>
+        <section id="view-kode-akses" class="view"></section>
+        <section id="view-audit" class="view"></section>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fa-solid fa-shield-halved"></i>
+    <span id="toastText"></span>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
