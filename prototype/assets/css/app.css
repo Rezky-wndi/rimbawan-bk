@@ -185,6 +185,7 @@ a {
 }
 
 .sidebar-foot {
+  position: relative;
   padding: 14px;
   border-top: 1px solid rgba(255, 255, 255, .08);
 }
@@ -194,6 +195,17 @@ a {
   align-items: center;
   gap: 11px;
   min-width: 0;
+}
+
+.userbox-button {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.userbox-button:hover {
+  background: rgba(255, 255, 255, .06);
 }
 
 .userbox > span {
@@ -223,25 +235,48 @@ a {
   font-size: 11px;
 }
 
-.logout-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  min-height: 38px;
-  margin-top: 12px;
-  border: 1px solid rgba(255, 255, 255, .1);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, .06);
-  color: #D7E6DC;
-  font-size: 12.5px;
-  font-weight: 700;
+.profile-popover {
+  position: absolute;
+  right: 14px;
+  bottom: 72px;
+  left: 14px;
+  z-index: 60;
+  display: none;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 12px;
+  background: #FFFFFF;
+  box-shadow: 0 18px 40px rgba(8, 45, 32, .24);
 }
 
-.logout-button:hover {
-  background: rgba(255, 255, 255, .1);
-  color: #FFFFFF;
+.profile-popover.open,
+.sidebar-foot:focus-within .profile-popover {
+  display: block;
+}
+
+.profile-popover button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 38px;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.profile-popover button:hover {
+  background: var(--forest-50);
+}
+
+.profile-popover i {
+  width: 16px;
+  color: var(--forest-700);
 }
 
 .main {
@@ -580,6 +615,68 @@ a {
 .field-area {
   min-height: 108px;
   resize: vertical;
+}
+
+.collapsible-panel[hidden] {
+  display: none;
+}
+
+.inline-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+  gap: 12px;
+  align-items: end;
+  padding: 14px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--forest-50);
+}
+
+.sub-panel {
+  margin-top: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #FFFFFF;
+  overflow: hidden;
+}
+
+.panel-head.compact {
+  padding: 14px 16px;
+}
+
+.panel-head.compact h2 {
+  font-size: 15px;
+}
+
+.doc-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.doc-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+}
+
+.doc-row strong {
+  display: block;
+  font-size: 13.5px;
+}
+
+.doc-row span {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.empty.slim {
+  padding: 22px 14px;
 }
 
 .privacy {
@@ -1237,6 +1334,14 @@ a {
     grid-template-columns: 1fr;
   }
 
+  .inline-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .inline-form .button {
+    grid-column: 1 / -1;
+  }
+
   .sidebar {
     position: fixed;
     left: 0;
@@ -1318,7 +1423,8 @@ a {
   }
 
   .code-grid,
-  .access-row {
+  .access-row,
+  .inline-form {
     grid-template-columns: 1fr;
   }
 }

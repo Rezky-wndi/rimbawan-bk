@@ -29,8 +29,8 @@
 
       <nav class="nav">
         <a href="#dashboard" data-route="dashboard"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
-        <a href="#siswa" data-route="siswa"><i class="fa-solid fa-user-graduate"></i> Data Siswa</a>
-        <a href="#pelanggaran" data-route="pelanggaran"><i class="fa-solid fa-triangle-exclamation"></i> Pelanggaran & Poin</a>
+        <a href="#siswa" data-route="siswa"><i class="fa-solid fa-user-graduate"></i> Peserta Didik</a>
+        <a href="#pelanggaran" data-route="pelanggaran"><i class="fa-solid fa-triangle-exclamation"></i> Pelanggaran</a>
         <a href="#konseling" data-route="konseling"><i class="fa-solid fa-comments"></i> Konseling <span class="nav-lock"><i class="fa-solid fa-lock"></i></span></a>
         <a href="#surat" data-route="surat"><i class="fa-solid fa-envelope-open-text"></i> Surat Panggilan</a>
         <a href="#laporan" data-route="laporan"><i class="fa-solid fa-file-lines"></i> Laporan</a>
@@ -39,16 +39,17 @@
       </nav>
 
       <div class="sidebar-foot">
-        <div class="userbox">
+        <button class="userbox userbox-button" id="profileMenuButton" type="button" aria-expanded="false">
           <span id="currentUserInitials">SP</span>
           <div>
             <strong id="currentUserName">Sri Pamungkas, S.Pd</strong>
             <small id="currentUserRole">Guru BK</small>
           </div>
-        </div>
-        <button class="logout-button" id="logoutButton" type="button">
-          <i class="fa-solid fa-right-from-bracket"></i> Keluar
         </button>
+        <div class="profile-popover" id="profilePopover">
+          <button type="button" data-route-go="profil"><i class="fa-solid fa-user"></i> Profil</button>
+          <button type="button" id="logoutButton"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
+        </div>
       </div>
     </aside>
 
@@ -63,7 +64,7 @@
         </div>
         <label class="global-search" for="globalSearch">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <input id="globalSearch" type="search" placeholder="Cari siswa, asrama, status, atau kasus">
+          <input id="globalSearch" type="search" placeholder="Cari peserta didik, NIS, kelas, atau catatan">
         </label>
         <button class="icon-button" id="notificationButton" aria-label="Notifikasi">
           <i class="fa-regular fa-bell"></i>
@@ -91,6 +92,7 @@
     <span id="toastText"></span>
   </div>
 
+  <script src="assets/js/records.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
 </html>

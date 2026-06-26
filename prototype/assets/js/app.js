@@ -1,4 +1,10 @@
-const STORAGE_KEY = "rimbawanBkPrototype";
+const STORAGE_KEY = "rimbawanBkCleanOpsV1";
+
+const rombels = window.RIMBAWAN_DATA?.rombels || [
+  "X A", "X B", "X C",
+  "XI A", "XI B", "XI C",
+  "XII A", "XII B", "XII C"
+];
 
 const roles = {
   guru_bk: {
@@ -35,6 +41,11 @@ const seedState = {
   activeStudentId: "SIS-001",
   sessionRole: null,
   sessionCodeId: null,
+  customStudents: [],
+  studentClassOverrides: {},
+  studentDocuments: {},
+  studentSubjects: {},
+  studentViolations: {},
   accessCodes: [
     {
       id: "AKS-GURU-BK",
@@ -46,21 +57,21 @@ const seedState = {
       active: true
     },
     {
-      id: "AKS-WK-XITKJ",
-      code: "WK-XITKJ",
+      id: "AKS-WK-XA",
+      code: "WK-XA",
       role: "wali_kelas",
-      owner: "Wali Kelas XI TKJ",
-      scopeLabel: "Kelas XI TKJ",
-      scope: { type: "class", value: "XI TKJ" },
+      owner: "Wali Kelas X A",
+      scopeLabel: "Kelas X A",
+      scope: { type: "class", value: "X A" },
       active: true
     },
     {
-      id: "AKS-WK-XAPHP",
-      code: "WK-XAPHP",
+      id: "AKS-WK-XB",
+      code: "WK-XB",
       role: "wali_kelas",
-      owner: "Wali Kelas X APHP",
-      scopeLabel: "Kelas X APHP",
-      scope: { type: "class", value: "X APHP" },
+      owner: "Wali Kelas X B",
+      scopeLabel: "Kelas X B",
+      scope: { type: "class", value: "X B" },
       active: true
     },
     {
@@ -74,8 +85,7 @@ const seedState = {
     }
   ],
   filters: {
-    risk: "all",
-    dorm: "all"
+    className: "all"
   },
   auditLogs: [
     {
@@ -101,185 +111,23 @@ const seedState = {
       date: "2026-06-13",
       area: "Sosial",
       status: "Diproses",
-      followUp: "Koordinasi dengan pembina asrama."
+      followUp: "Koordinasi dengan wali kelas."
     }
   ]
 };
 
-const students = [
-  {
-    id: "SIS-001",
-    nis: "2324.10.0042",
-    name: "Andi Pratama",
-    initials: "AP",
-    className: "XI TKJ",
-    dorm: "Meranti",
-    room: "04",
-    gender: "Laki-laki",
-    attendance: 71,
-    points: 118,
-    risk: "Risiko Tinggi",
-    stage: "Panggilan Orang Tua",
-    phoneMasked: "0812-****-7890",
-    phoneFull: "0812-3456-7890",
-    emailMasked: "a*****@email.com",
-    emailFull: "andi.pratama@email.com",
-    parentPhoneMasked: "0813-****-2211",
-    parentPhoneFull: "0813-7788-2211",
-    notes: "Adaptasi asrama masih berlangsung. Memerlukan pendampingan bidang belajar dan kedisiplinan.",
-    violations: [
-      ["2026-06-17", "Terlambat masuk", "Ringan", 5, "Terverifikasi"],
-      ["2026-06-09", "Membolos pelajaran", "Sedang", 25, "Terverifikasi"],
-      ["2026-05-28", "Keluar asrama tanpa izin", "Berat", 50, "Terverifikasi"],
-      ["2026-05-15", "Tidak mengikuti apel", "Sedang", 38, "Diproses"]
-    ],
-    academics: [
-      ["Matematika", 75, 68],
-      ["Bahasa Inggris", 75, 70],
-      ["Bahasa Indonesia", 75, 82],
-      ["Produktif TKJ", 75, 88]
-    ]
-  },
-  {
-    id: "SIS-002",
-    nis: "2324.10.0077",
-    name: "Rina Salsabila",
-    initials: "RS",
-    className: "X APHP",
-    dorm: "Jati",
-    room: "11",
-    gender: "Perempuan",
-    attendance: 84,
-    points: 62,
-    risk: "Perlu Perhatian",
-    stage: "Konseling BK",
-    phoneMasked: "0821-****-0192",
-    phoneFull: "0821-5521-0192",
-    emailMasked: "r*****@email.com",
-    emailFull: "rina.salsabila@email.com",
-    parentPhoneMasked: "0852-****-3344",
-    parentPhoneFull: "0852-9900-3344",
-    notes: "Perlu dukungan adaptasi sosial di asrama dan jadwal belajar malam.",
-    violations: [
-      ["2026-06-12", "Tidak mengikuti belajar malam", "Sedang", 20, "Terverifikasi"],
-      ["2026-05-30", "Terlambat apel", "Ringan", 5, "Terverifikasi"],
-      ["2026-05-22", "Keluar kelas tanpa izin", "Sedang", 37, "Terverifikasi"]
-    ],
-    academics: [
-      ["Matematika", 75, 76],
-      ["Bahasa Inggris", 75, 78],
-      ["Pengolahan Hasil Hutan", 75, 84],
-      ["PKn", 75, 80]
-    ]
-  },
-  {
-    id: "SIS-003",
-    nis: "2324.10.0091",
-    name: "Dimas Maulana",
-    initials: "DM",
-    className: "XII TKJ",
-    dorm: "Meranti",
-    room: "07",
-    gender: "Laki-laki",
-    attendance: 86,
-    points: 54,
-    risk: "Konseling Lanjutan",
-    stage: "Konseling BK",
-    phoneMasked: "0811-****-2201",
-    phoneFull: "0811-6701-2201",
-    emailMasked: "d*****@email.com",
-    emailFull: "dimas.maulana@email.com",
-    parentPhoneMasked: "0812-****-4500",
-    parentPhoneFull: "0812-4400-4500",
-    notes: "Konseling lanjutan terkait disiplin dan kesiapan praktik kerja.",
-    violations: [
-      ["2026-06-10", "Terlambat praktik", "Ringan", 5, "Terverifikasi"],
-      ["2026-05-19", "Membolos pelajaran", "Sedang", 25, "Terverifikasi"],
-      ["2026-04-30", "Tidak mengikuti apel", "Sedang", 24, "Terverifikasi"]
-    ],
-    academics: [
-      ["Produktif TKJ", 75, 80],
-      ["Bahasa Inggris", 75, 72],
-      ["Matematika", 75, 74],
-      ["Kewirausahaan", 75, 83]
-    ]
-  },
-  {
-    id: "SIS-004",
-    nis: "2324.10.0102",
-    name: "Nabila Fitri",
-    initials: "NF",
-    className: "XI APHP",
-    dorm: "Jati",
-    room: "09",
-    gender: "Perempuan",
-    attendance: 93,
-    points: 31,
-    risk: "Monitoring",
-    stage: "Perlu Perhatian",
-    phoneMasked: "0853-****-1132",
-    phoneFull: "0853-8811-1132",
-    emailMasked: "n*****@email.com",
-    emailFull: "nabila.fitri@email.com",
-    parentPhoneMasked: "0813-****-7831",
-    parentPhoneFull: "0813-3200-7831",
-    notes: "Monitoring ringan terkait adaptasi belajar setelah perpindahan kelas.",
-    violations: [
-      ["2026-06-03", "Terlambat apel", "Ringan", 5, "Terverifikasi"],
-      ["2026-05-21", "Tidak membawa perlengkapan praktik", "Ringan", 10, "Terverifikasi"],
-      ["2026-04-17", "Tidak mengikuti belajar malam", "Sedang", 16, "Terverifikasi"]
-    ],
-    academics: [
-      ["Pengolahan Hasil Hutan", 75, 86],
-      ["Matematika", 75, 79],
-      ["Bahasa Indonesia", 75, 84],
-      ["PKn", 75, 81]
-    ]
-  },
-  {
-    id: "SIS-005",
-    nis: "2324.10.0115",
-    name: "Muhammad Fajar",
-    initials: "MF",
-    className: "X ATPH",
-    dorm: "Ulin",
-    room: "03",
-    gender: "Laki-laki",
-    attendance: 96,
-    points: 14,
-    risk: "Aman",
-    stage: "Aman",
-    phoneMasked: "0822-****-7031",
-    phoneFull: "0822-7100-7031",
-    emailMasked: "f*****@email.com",
-    emailFull: "m.fajar@email.com",
-    parentPhoneMasked: "0812-****-9913",
-    parentPhoneFull: "0812-4501-9913",
-    notes: "Perkembangan baik. Direkomendasikan menjadi teman dukungan sebaya.",
-    violations: [
-      ["2026-05-20", "Terlambat apel", "Ringan", 5, "Terverifikasi"],
-      ["2026-04-16", "Tidak membawa buku saku", "Ringan", 9, "Terverifikasi"]
-    ],
-    academics: [
-      ["Silvikultur", 75, 87],
-      ["Matematika", 75, 81],
-      ["Bahasa Inggris", 75, 80],
-      ["PKn", 75, 86]
-    ]
-  }
-];
-
+const students = window.RIMBAWAN_DATA?.students || [];
 const tasks = [
-  ["Hari ini", "Tinjau draft SP-2026-016", "Akumulasi poin 118 menunggu persetujuan", "warn"],
-  ["Besok", "Evaluasi konseling Andi P.", "Tinjauan komitmen siswa dan wali asrama", "warn"],
-  ["3 hari", "Home visit Rina Salsabila", "Koordinasi dengan orang tua", "info"],
-  ["Tertunda", "Verifikasi aduan TKT-0231", "Prioritas tinggi", "danger"]
+  ["Hari ini", "Lengkapi data peserta didik", "Periksa rombel dan biodata awal", "warn"],
+  ["Besok", "Review catatan konseling", "Tinjauan tindak lanjut peserta didik", "warn"],
+  ["3 hari", "Koordinasi wali kelas", "Pastikan akses wali kelas sesuai rombel", "info"],
+  ["Tertunda", "Verifikasi catatan baru", "Belum ada pelanggaran aktif", "danger"]
 ];
 
 const letters = [
-  ["SP-2026-016", "Andi Pratama", "Akumulasi poin 118", "Draft"],
-  ["SP-2026-015", "Rina Salsabila", "Koordinasi orang tua", "Menunggu Persetujuan"],
-  ["SP-2026-014", "Andi Pratama", "Panggilan orang tua", "Dikonfirmasi Hadir"]
+  ["SP-2026-016", "Peserta didik", "Draft surat panggilan bila diperlukan", "Draft"],
+  ["SP-2026-015", "Peserta didik", "Koordinasi orang tua", "Menunggu Persetujuan"],
+  ["SP-2026-014", "Peserta didik", "Panggilan orang tua", "Dikonfirmasi Hadir"]
 ];
 
 let state = loadState();
@@ -298,6 +146,26 @@ function loadState() {
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function allStudents() {
+  return [...students, ...(state.customStudents || [])];
+}
+
+function studentDocuments(studentId) {
+  return state.studentDocuments?.[studentId] || [];
+}
+
+function academicsFor(student) {
+  return [...(student.academics || []), ...(state.studentSubjects?.[student.id] || [])];
+}
+
+function violationsFor(student) {
+  return [...(student.violations || []), ...(state.studentViolations?.[student.id] || [])];
+}
+
+function classFor(student) {
+  return state.studentClassOverrides?.[student.id] || student.className;
 }
 
 function accessCodes() {
@@ -350,10 +218,11 @@ function roleScopeText() {
 function visibleStudents() {
   const scope = effectiveScope();
   if (!currentRole()) return [];
-  if (scope.type === "class") return students.filter((student) => student.className === scope.value);
-  if (scope.type === "student") return students.filter((student) => student.id === scope.value);
-  if (scope.type === "aggregate") return students;
-  return students;
+  const source = allStudents();
+  if (scope.type === "class") return source.filter((student) => classFor(student) === scope.value);
+  if (scope.type === "student") return source.filter((student) => student.id === scope.value);
+  if (scope.type === "aggregate") return source;
+  return source;
 }
 
 function visibleStudentIds() {
@@ -425,32 +294,41 @@ function badge(label) {
   return `<span class="badge ${tone}"><i class="fa-solid fa-circle"></i>${escapeHtml(label)}</span>`;
 }
 
-function pointStage(points) {
-  if (points <= 25) return "Aman";
-  if (points <= 50) return "Perlu Perhatian";
-  if (points <= 100) return "Konseling BK";
-  if (points <= 150) return "Panggilan Orang Tua";
-  if (points <= 200) return "Home Visit";
-  return "Sidang Disiplin";
+function riskFor(student) {
+  return violationsFor(student).length ? "Ada Catatan" : "Aktif";
+}
+
+function initialsFromName(name) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0].toUpperCase())
+    .join("") || "SW";
+}
+
+function maskContact(value, fallback = "-") {
+  if (!value) return fallback;
+  if (value.includes("@")) {
+    const [name, domain] = value.split("@");
+    return `${name.slice(0, 1)}*****@${domain || "email.com"}`;
+  }
+  return value.length > 7 ? `${value.slice(0, 4)}-****-${value.slice(-4)}` : value;
 }
 
 function filteredStudents() {
   const search = qs("#globalSearch").value.trim().toLowerCase();
-  const risk = state.filters?.risk || "all";
-  const dorm = state.filters?.dorm || "all";
+  const selectedClass = state.filters?.className || "all";
   return visibleStudents().filter((student) => {
     const haystack = [
       student.name,
       student.nis,
-      student.className,
-      student.dorm,
-      student.risk,
-      student.stage
+      classFor(student),
+      riskFor(student)
     ].join(" ").toLowerCase();
     const bySearch = !search || haystack.includes(search);
-    const byRisk = risk === "all" || student.risk === risk || student.stage === risk;
-    const byDorm = dorm === "all" || student.dorm === dorm;
-    return bySearch && byRisk && byDorm;
+    const byClass = selectedClass === "all" || classFor(student) === selectedClass;
+    return bySearch && byClass;
   });
 }
 
@@ -483,9 +361,9 @@ function render() {
 
   const titleMap = {
     dashboard: "Dashboard",
-    siswa: "Data Siswa",
-    profil: "Profil Siswa",
-    pelanggaran: "Pelanggaran & Poin",
+    siswa: "Peserta Didik",
+    profil: "Profil Peserta Didik",
+    pelanggaran: "Pelanggaran",
     konseling: "Konseling",
     surat: "Surat Panggilan",
     laporan: "Laporan",
@@ -572,10 +450,9 @@ function syncSessionUi() {
 
 function renderDashboard() {
   const data = visibleStudents();
-  const totalPoints = data.reduce((sum, student) => sum + student.points, 0);
-  const highRisk = data.filter((student) => student.points > 100).length;
   const visibleIds = visibleStudentIds();
   const counselingCount = state.counselingNotes.filter((note) => visibleIds.has(note.studentId)).length;
+  const violationCount = data.reduce((sum, student) => sum + violationsFor(student).length, 0);
   const avgAttendance = Math.round(data.reduce((sum, student) => sum + student.attendance, 0) / Math.max(1, data.length));
   const aggregateOnly = effectiveScope().type === "aggregate";
 
@@ -586,44 +463,44 @@ function renderDashboard() {
         <p>${roleDisplayName()} - ${roleScopeText()}.</p>
       </div>
       <div class="actions">
-        ${canAccess("siswa") ? `<button class="button ghost" data-route-go="siswa"><i class="fa-solid fa-user-graduate"></i> Buka Data Siswa</button>` : ""}
+        ${canAccess("siswa") ? `<button class="button ghost" data-route-go="siswa"><i class="fa-solid fa-user-graduate"></i> Buka Data Peserta Didik</button>` : ""}
         ${canAccess("konseling") ? `<button class="button primary" data-route-go="konseling"><i class="fa-solid fa-plus"></i> Catat Konseling</button>` : ""}
       </div>
     </div>
     <div class="privacy">
       <i class="fa-solid fa-lock"></i>
-      <div><strong>Tampilan terlindungi.</strong> Data yang muncul mengikuti kode akses login. Isi konseling dan data keluarga tetap dibatasi untuk Guru BK/Admin.</div>
+      <div><strong>Tampilan terlindungi.</strong> Data ditampilkan per kelas/rombel. Isi konseling dan biodata keluarga tetap dibatasi untuk Guru BK/Admin.</div>
     </div>
     <section class="stats">
-      ${statCard("Total Siswa", data.length, aggregateOnly ? "Ringkasan sekolah" : "Dalam cakupan akses", "fa-solid fa-user-graduate", "green")}
-      ${statCard("Prioritas Tinggi", highRisk, "Poin di atas 100", "fa-solid fa-triangle-exclamation", "red")}
+      ${statCard("Total Peserta Didik", data.length, aggregateOnly ? "Ringkasan sekolah" : "Dalam cakupan akses", "fa-solid fa-user-graduate", "green")}
+      ${statCard("Total Kelas", new Set(data.map((student) => classFor(student))).size, "Rombel aktif", "fa-solid fa-chalkboard-user", "blue")}
       ${statCard("Konseling Tercatat", counselingCount, "Termasuk catatan lokal prototype", "fa-solid fa-comments", "gold")}
-      ${statCard("Rata-rata Kehadiran", `${avgAttendance}%`, "Semester berjalan", "fa-solid fa-calendar-check", "blue")}
+      ${statCard("Catatan Pelanggaran", violationCount, "Catatan aktif", "fa-solid fa-clipboard-list", "red")}
     </section>
     <div class="grid-2">
       <div>
         <section class="panel">
           <div class="panel-head">
             <div>
-              <h2>${aggregateOnly ? "Distribusi Kondisi Murid" : "Siswa Prioritas Pendampingan"}</h2>
-              <p>${aggregateOnly ? "Kepala sekolah melihat ringkasan, bukan isi konseling." : "Diurutkan dari skor poin tertinggi."}</p>
+              <h2>${aggregateOnly ? "Ringkasan Peserta Didik per Kelas" : "Peserta Didik per Kelas"}</h2>
+              <p>Data peserta didik dikelompokkan berdasarkan rombel.</p>
             </div>
             ${canAccess("siswa") ? `<button class="button ghost" data-route-go="siswa">Semua</button>` : ""}
           </div>
-          <div class="table-wrap">${aggregateOnly ? aggregateSummary(data) : studentTable(data.slice().sort((a, b) => b.points - a.points).slice(0, 4))}</div>
+          <div class="table-wrap">${aggregateSummary(data)}</div>
         </section>
         <section class="panel">
           <div class="panel-head">
             <div>
               <h2>Peta Layanan</h2>
-              <p>Komposisi kebutuhan layanan bulan ini.</p>
+              <p>Komposisi layanan awal setelah data peserta didik dimasukkan.</p>
             </div>
           </div>
           <div class="panel-body mini-bars">
-            ${barRow("Konseling", 47, 60, "green")}
-            ${barRow("Pelanggaran", 23, 60, "warn")}
-            ${barRow("Home Visit", 5, 20, "info")}
-            ${barRow("Aduan", 4, 20, "danger")}
+            ${barRow("Peserta Didik", data.length, Math.max(1, data.length), "green")}
+            ${barRow("Konseling", counselingCount, Math.max(1, data.length), "info")}
+            ${barRow("Pelanggaran", violationCount, Math.max(1, data.length), "warn")}
+            ${barRow("Kelas", new Set(data.map((student) => classFor(student))).size, rombels.length, "info")}
           </div>
         </section>
       </div>
@@ -642,19 +519,12 @@ function renderDashboard() {
         <section class="panel">
           <div class="panel-head">
             <div>
-              <h2>Ambang Poin</h2>
-              <p>Simulasi rekomendasi tahap pendampingan.</p>
+              <h2>Masa Transisi Kenaikan Kelas</h2>
+              <p>Kelas peserta didik bisa diubah dari halaman profil masing-masing.</p>
             </div>
           </div>
           <div class="panel-body">
-            <div class="form-field">
-              <label for="pointInput">Jumlah poin</label>
-              <input class="field-input" id="pointInput" type="number" min="0" value="${totalPoints}">
-            </div>
-            <p id="pointResult" class="note info" style="margin-top:12px;margin-bottom:0">
-              <i class="fa-solid fa-circle-info"></i>
-              <span>Total contoh ${totalPoints} poin masuk tahap ${pointStage(totalPoints)}.</span>
-            </p>
+            <div class="note info" style="margin-bottom:0"><i class="fa-solid fa-circle-info"></i><div>Gunakan fitur <b>Ubah Kelas</b> pada profil peserta didik untuk memindahkan rombel tanpa menghapus data biodata.</div></div>
           </div>
         </section>
       </div>
@@ -686,17 +556,12 @@ function barRow(label, value, max, tone) {
 }
 
 function aggregateSummary(data) {
-  const rows = [
-    ["Aman", data.filter((student) => student.points <= 25).length],
-    ["Perlu Perhatian", data.filter((student) => student.points > 25 && student.points <= 50).length],
-    ["Konseling BK", data.filter((student) => student.points > 50 && student.points <= 100).length],
-    ["Panggilan/Home Visit", data.filter((student) => student.points > 100).length]
-  ];
+  const rows = rombels.map((rombel) => [rombel, data.filter((student) => classFor(student) === rombel).length]);
   return `
     <table class="table">
-      <thead><tr><th>Kategori</th><th>Jumlah Murid</th><th>Catatan</th></tr></thead>
+      <thead><tr><th>Kelas / Rombel</th><th>Jumlah Peserta Didik</th><th>Catatan</th></tr></thead>
       <tbody>
-        ${rows.map((row) => `<tr><td>${badge(row[0])}</td><td><strong>${row[1]}</strong></td><td style="color:var(--text-2)">Data agregat untuk laporan kepala sekolah</td></tr>`).join("")}
+        ${rows.map((row) => `<tr><td>${badge(row[0])}</td><td><strong>${row[1]}</strong></td><td style="color:var(--text-2)">Data aktif per kelas</td></tr>`).join("")}
       </tbody>
     </table>
   `;
@@ -704,37 +569,33 @@ function aggregateSummary(data) {
 
 function renderStudents() {
   const scoped = visibleStudents();
-  const riskOptions = [...new Set(scoped.flatMap((student) => [student.risk, student.stage]))];
-  const dormOptions = [...new Set(scoped.map((student) => student.dorm))];
+  const classOptions = [...new Set(scoped.map((student) => classFor(student)))];
   const data = filteredStudents();
-  const selectedRisk = state.filters?.risk || "all";
-  const selectedDorm = state.filters?.dorm || "all";
+  const selectedClass = state.filters?.className || "all";
   qs("#view-siswa").innerHTML = `
     <div class="page-head">
       <div>
-        <h1>Data Siswa</h1>
-        <p>Daftar siswa dengan prioritas layanan berdasarkan kehadiran, poin, asrama, dan status pendampingan.</p>
+        <h1>Data Peserta Didik</h1>
+        <p>Daftar peserta didik berdasarkan kelas/rombel. Kelas bisa diubah saat masa transisi kenaikan kelas.</p>
       </div>
       <div class="actions">
+        ${can("view_sensitive") ? `<button class="button primary" data-toggle-panel="addStudentPanel"><i class="fa-solid fa-user-plus"></i> Tambah Peserta Didik</button>` : ""}
         <button class="button ghost" id="exportStudents"><i class="fa-solid fa-file-csv"></i> Ekspor CSV</button>
         <button class="button primary" data-route-go="profil"><i class="fa-solid fa-address-card"></i> Buka Profil Aktif</button>
       </div>
     </div>
+    ${can("view_sensitive") ? addStudentPanel() : ""}
     <div class="filters">
-      <select class="field-select" id="riskFilter" aria-label="Filter status">
-        <option value="all" ${selectedRisk === "all" ? "selected" : ""}>Semua status</option>
-        ${riskOptions.map((option) => `<option value="${option}" ${selectedRisk === option ? "selected" : ""}>${option}</option>`).join("")}
-      </select>
-      <select class="field-select" id="dormFilter" aria-label="Filter asrama">
-        <option value="all" ${selectedDorm === "all" ? "selected" : ""}>Semua asrama</option>
-        ${dormOptions.map((option) => `<option value="${option}" ${selectedDorm === option ? "selected" : ""}>${option}</option>`).join("")}
+      <select class="field-select" id="classFilter" aria-label="Filter kelas">
+        <option value="all" ${selectedClass === "all" ? "selected" : ""}>Semua kelas</option>
+        ${classOptions.map((option) => `<option value="${option}" ${selectedClass === option ? "selected" : ""}>${option}</option>`).join("")}
       </select>
     </div>
     <section class="panel">
       <div class="panel-head">
         <div>
-          <h2>Daftar Siswa</h2>
-          <p>${data.length} siswa tampil dari ${scoped.length} siswa dalam cakupan akses.</p>
+          <h2>Daftar Peserta Didik</h2>
+          <p>${data.length} peserta didik tampil dari ${scoped.length} peserta didik dalam cakupan akses.</p>
         </div>
       </div>
       <div class="table-wrap">${studentTable(data)}</div>
@@ -742,19 +603,63 @@ function renderStudents() {
   `;
 }
 
+function addStudentPanel() {
+  return `
+    <section class="panel collapsible-panel" id="addStudentPanel" hidden>
+      <div class="panel-head">
+        <div>
+          <h2>Tambah Peserta Didik</h2>
+          <p>Rombel tersedia 9 kelas: X A sampai XII C.</p>
+        </div>
+      </div>
+      <div class="panel-body">
+        <form class="form-grid" id="studentForm">
+          <div class="form-field">
+            <label for="studentName">Nama siswa</label>
+            <input class="field-input" id="studentName" required>
+          </div>
+          <div class="form-field">
+            <label for="studentNis">NIS</label>
+            <input class="field-input" id="studentNis" required>
+          </div>
+          <div class="form-field">
+            <label for="studentClass">Rombel</label>
+            <select class="field-select" id="studentClass" required>
+              ${rombels.map((rombel) => `<option value="${rombel}">${rombel}</option>`).join("")}
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="studentGender">Jenis kelamin</label>
+            <select class="field-select" id="studentGender" required>
+              <option>Laki-laki</option>
+              <option>Perempuan</option>
+            </select>
+          </div>
+          <div class="form-field full">
+            <label for="studentNotes">Catatan awal BK</label>
+            <textarea class="field-area" id="studentNotes" placeholder="Catatan singkat kebutuhan pendampingan awal."></textarea>
+          </div>
+          <div class="form-field full">
+            <button class="button primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Simpan Peserta Didik</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  `;
+}
+
 function studentTable(data) {
   if (!data.length) {
-    return `<div class="empty"><i class="fa-regular fa-folder-open"></i><strong>Data tidak ditemukan</strong><p>Ubah kata kunci atau filter untuk melihat siswa lain.</p></div>`;
+    return `<div class="empty"><i class="fa-regular fa-folder-open"></i><strong>Data tidak ditemukan</strong><p>Ubah kata kunci atau filter untuk melihat peserta didik lain.</p></div>`;
   }
   return `
     <table class="table">
       <thead>
         <tr>
-          <th>Siswa</th>
+          <th>Peserta Didik</th>
           <th>Kelas</th>
-          <th>Asrama</th>
           <th>Kehadiran</th>
-          <th>Poin</th>
+          <th>Catatan Pelanggaran</th>
           <th>Status</th>
           <th>Aksi</th>
         </tr>
@@ -768,11 +673,10 @@ function studentTable(data) {
                 <div><strong>${student.name}</strong><span>NIS ${student.nis}</span></div>
               </div>
             </td>
-            <td>${student.className}</td>
-            <td>${student.dorm} / ${student.room}</td>
+            <td>${classFor(student)}</td>
             <td><strong>${student.attendance}%</strong></td>
-            <td><strong>${student.points}</strong></td>
-            <td>${badge(student.risk)}</td>
+            <td><strong>${violationsFor(student).length}</strong></td>
+            <td>${badge(riskFor(student))}</td>
             <td><button class="button ghost" data-open-student="${student.id}"><i class="fa-regular fa-eye"></i> Profil</button></td>
           </tr>
         `).join("")}
@@ -786,7 +690,7 @@ function renderProfile() {
   let tabs = [
     ["biodata", "fa-solid fa-id-card", "Biodata"],
     ["akademik", "fa-solid fa-chart-simple", "Akademik"],
-    ["pelanggaran", "fa-solid fa-triangle-exclamation", "Poin"],
+    ["pelanggaran", "fa-solid fa-triangle-exclamation", "Pelanggaran"],
     ["konseling", "fa-solid fa-lock", "Konseling"],
     ["keluarga", "fa-solid fa-people-roof", "Keluarga"]
   ];
@@ -803,11 +707,10 @@ function renderProfile() {
           <h1>${student.name} ${badge("Aktif")}</h1>
           <div class="meta">
             <span><i class="fa-solid fa-id-card"></i> NIS ${student.nis}</span>
-            <span><i class="fa-solid fa-graduation-cap"></i> ${student.className}</span>
-            <span><i class="fa-solid fa-building"></i> Asrama ${student.dorm}, kamar ${student.room}</span>
+            <span><i class="fa-solid fa-graduation-cap"></i> Kelas ${classFor(student)}</span>
             <span><i class="fa-solid fa-venus-mars"></i> ${student.gender}</span>
           </div>
-          <div class="meta">${badge(student.risk)} ${badge(student.stage)}</div>
+          <div class="meta">${badge(riskFor(student))} ${badge(`${violationsFor(student).length} catatan pelanggaran`)}</div>
         </div>
         <div class="profile-actions">
           <button class="button ghost" data-route-go="siswa"><i class="fa-solid fa-arrow-left"></i> Daftar</button>
@@ -816,9 +719,9 @@ function renderProfile() {
       </div>
       <div class="profile-stats">
         ${profileStat("Kehadiran", `${student.attendance}%`, "fa-solid fa-calendar-check", "green")}
-        ${profileStat("Poin", student.points, "fa-solid fa-triangle-exclamation", "red")}
-        ${profileStat("Tahap", pointStage(student.points), "fa-solid fa-route", "gold")}
-        ${profileStat("Asrama", student.dorm, "fa-solid fa-building", "blue")}
+        ${profileStat("Kelas", classFor(student), "fa-solid fa-chalkboard-user", "blue")}
+        ${profileStat("Pelanggaran", violationsFor(student).length, "fa-solid fa-clipboard-list", "red")}
+        ${profileStat("Status", riskFor(student), "fa-solid fa-circle-check", "gold")}
       </div>
     </section>
     <div class="tabs">
@@ -843,11 +746,12 @@ function profileTabContent(student) {
   if (activeProfileTab === "akademik") {
     return `
       <div class="note info"><i class="fa-solid fa-circle-info"></i><div>Nilai akademik digunakan sebagai sinyal pendampingan. Guru BK membaca dan menganalisis, bukan mengubah nilai.</div></div>
+      ${can("view_sensitive") ? subjectForm(student) : ""}
       <div class="table-wrap">
         <table class="table">
           <thead><tr><th>Mata Pelajaran</th><th>KKM</th><th>Nilai</th><th>Status</th></tr></thead>
           <tbody>
-            ${student.academics.map((row) => `<tr><td>${row[0]}</td><td>${row[1]}</td><td><strong>${row[2]}</strong></td><td>${badge(row[2] >= row[1] ? "Tuntas" : "Di bawah KKM")}</td></tr>`).join("")}
+            ${academicsFor(student).length ? academicsFor(student).map((row) => `<tr><td>${row[0]}</td><td>${row[1]}</td><td><strong>${row[2]}</strong></td><td>${badge(row[2] >= row[1] ? "Tuntas" : "Di bawah KKM")}</td></tr>`).join("") : `<tr><td colspan="4" style="color:var(--text-2)">Belum ada data mata pelajaran.</td></tr>`}
           </tbody>
         </table>
       </div>
@@ -855,7 +759,7 @@ function profileTabContent(student) {
   }
 
   if (activeProfileTab === "pelanggaran") {
-    return violationTable(student.violations);
+    return `${can("view_sensitive") ? violationForm(student) : ""}${violationTable(violationsFor(student))}`;
   }
 
   if (activeProfileTab === "konseling") {
@@ -872,27 +776,130 @@ function profileTabContent(student) {
     return `
       <div class="note warn"><i class="fa-solid fa-shield-halved"></i><div>Data keluarga privat. Wali kelas dan kepala sekolah tidak melihat detail ini.</div></div>
       <div class="field-grid">
-        ${field("Ayah", "Bambang Pratama")}
-        ${field("Pekerjaan Ayah", "Wiraswasta")}
+        ${field("Ayah", "-")}
+        ${field("Pekerjaan Ayah", "-")}
         ${maskedField("Telepon Orang Tua", student.parentPhoneMasked, student.parentPhoneFull, `${student.name} - telepon orang tua`)}
-        ${field("Ibu", "Siti Aminah")}
-        ${field("Preferensi Notifikasi", "WhatsApp")}
-        ${field("Kontak Darurat", "Bambang Pratama")}
+        ${field("Ibu", "-")}
+        ${field("Preferensi Notifikasi", "-")}
+        ${field("Kontak Darurat", "-")}
       </div>
     `;
   }
 
   return `
+    ${can("view_sensitive") ? classEditForm(student) : ""}
     <div class="field-grid">
       ${field("Nama Lengkap", student.name)}
       ${field("NIS", student.nis)}
       ${field("Jenis Kelamin", student.gender)}
-      ${field("Kelas", student.className)}
-      ${field("Asrama", `${student.dorm}, kamar ${student.room}`)}
+      ${field("Kelas Saat Ini", classFor(student))}
       ${can("view_sensitive") ? maskedField("Telepon", student.phoneMasked, student.phoneFull, `${student.name} - telepon siswa`) : field("Telepon", "Disembunyikan untuk role ini")}
       ${can("view_sensitive") ? maskedField("Email", student.emailMasked, student.emailFull, `${student.name} - email siswa`) : field("Email", "Disembunyikan untuk role ini")}
       ${field("Catatan Awal BK", student.notes)}
     </div>
+    ${can("view_sensitive") ? documentStorage(student) : ""}
+  `;
+}
+
+function classEditForm(student) {
+  return `
+    <form class="inline-form" id="classEditForm" data-student-id="${student.id}">
+      <div class="form-field">
+        <label for="studentNewClass">Ubah kelas / rombel</label>
+        <select class="field-select" id="studentNewClass" required>
+          ${rombels.map((rombel) => `<option value="${rombel}" ${classFor(student) === rombel ? "selected" : ""}>${rombel}</option>`).join("")}
+        </select>
+      </div>
+      <button class="button primary" type="submit"><i class="fa-solid fa-rotate"></i> Simpan Kelas</button>
+    </form>
+  `;
+}
+
+function subjectForm(student) {
+  return `
+    <form class="inline-form" id="subjectForm" data-student-id="${student.id}">
+      <div class="form-field">
+        <label for="subjectName">Mata pelajaran</label>
+        <input class="field-input" id="subjectName" placeholder="Contoh: Bahasa Inggris" required>
+      </div>
+      <div class="form-field">
+        <label for="subjectKkm">KKM</label>
+        <input class="field-input" id="subjectKkm" type="number" min="0" max="100" value="75" required>
+      </div>
+      <div class="form-field">
+        <label for="subjectScore">Nilai</label>
+        <input class="field-input" id="subjectScore" type="number" min="0" max="100" required>
+      </div>
+      <button class="button primary" type="submit"><i class="fa-solid fa-plus"></i> Tambah Pelajaran</button>
+    </form>
+  `;
+}
+
+function violationForm(student) {
+  return `
+    <form class="inline-form" id="violationForm" data-student-id="${student.id}">
+      <div class="form-field">
+        <label for="violationDate">Tanggal</label>
+        <input class="field-input" id="violationDate" type="date" value="2026-06-26" required>
+      </div>
+      <div class="form-field">
+        <label for="violationType">Jenis pelanggaran</label>
+        <input class="field-input" id="violationType" placeholder="Contoh: Terlambat apel" required>
+      </div>
+      <div class="form-field">
+        <label for="violationLevel">Kategori</label>
+        <select class="field-select" id="violationLevel">
+          <option>Ringan</option>
+          <option>Sedang</option>
+          <option>Berat</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label for="violationStatus">Status</label>
+        <select class="field-select" id="violationStatus">
+          <option>Diproses</option>
+          <option>Terverifikasi</option>
+          <option>Selesai</option>
+        </select>
+      </div>
+      <button class="button primary" type="submit"><i class="fa-solid fa-plus"></i> Tambah Pelanggaran</button>
+    </form>
+  `;
+}
+
+function documentStorage(student) {
+  const docs = studentDocuments(student.id);
+  const expected = ["Akta", "Ijazah", "Kartu Keluarga"];
+  return `
+    <section class="sub-panel">
+      <div class="panel-head compact">
+        <div>
+          <h2>Simpan File Biodata</h2>
+          <p>Akta, ijazah, dan KK. Prototype menyimpan nama file, bukan isi dokumen.</p>
+        </div>
+      </div>
+      <div class="panel-body">
+        <form class="form-grid" id="documentForm" data-student-id="${student.id}">
+          ${expected.map((label) => `
+            <div class="form-field">
+              <label for="doc${label.replace(/\s/g, "")}">${label}</label>
+              <input class="field-input" id="doc${label.replace(/\s/g, "")}" type="file" data-doc-type="${label}">
+            </div>
+          `).join("")}
+          <div class="form-field full">
+            <button class="button primary" type="submit"><i class="fa-solid fa-upload"></i> Simpan File</button>
+          </div>
+        </form>
+        <div class="doc-list">
+          ${docs.length ? docs.map((doc) => `
+            <div class="doc-row">
+              <span class="chip-icon blue"><i class="fa-solid fa-file"></i></span>
+              <div><strong>${escapeHtml(doc.type)}</strong><span>${escapeHtml(doc.name)} - ${doc.size}</span></div>
+            </div>
+          `).join("") : `<div class="empty slim"><i class="fa-regular fa-folder-open"></i><strong>Belum ada file</strong><p>File yang dipilih akan tercatat di sini.</p></div>`}
+        </div>
+      </div>
+    </section>
   `;
 }
 
@@ -915,48 +922,51 @@ function maskedField(label, masked, full, object) {
 }
 
 function renderViolations() {
-  const rows = visibleStudents().flatMap((student) => student.violations.map((violation) => ({ student, violation })));
+  const scoped = visibleStudents();
+  const rows = scoped.flatMap((student) => violationsFor(student).map((violation) => ({ student, violation })));
   qs("#view-pelanggaran").innerHTML = `
     <div class="page-head">
       <div>
-        <h1>Pelanggaran & Poin</h1>
-        <p>Ledger poin contoh. Poin hanya masuk setelah verifikasi dan koreksi harus menyimpan alasan.</p>
+        <h1>Pelanggaran</h1>
+        <p>Catatan pelanggaran peserta didik. Fokus pada jenis, kategori, status, dan tindak lanjut.</p>
       </div>
       <div class="actions">
-        <button class="button primary" data-route-go="surat"><i class="fa-solid fa-envelope-open-text"></i> Tinjau Surat</button>
+        ${can("view_sensitive") ? `<button class="button primary" data-route-go="siswa"><i class="fa-solid fa-user-graduate"></i> Pilih Peserta Didik</button>` : ""}
       </div>
     </div>
     <div class="privacy">
       <i class="fa-solid fa-scale-balanced"></i>
-      <div><strong>Catatan proses.</strong> Gunakan bahasa pendampingan. Hindari label yang menghakimi siswa.</div>
+      <div><strong>Catatan proses.</strong> Gunakan bahasa pendampingan. Hindari label yang menghakimi peserta didik.</div>
     </div>
     <section class="panel">
       <div class="panel-head">
         <div>
-          <h2>Ledger Terbaru</h2>
-          <p>${rows.length} entri contoh dari ${students.length} siswa.</p>
+          <h2>Catatan Terbaru</h2>
+          <p>${rows.length} catatan dari ${scoped.length} peserta didik dalam cakupan akses.</p>
         </div>
       </div>
       <div class="table-wrap">
-        <table class="table">
-          <thead><tr><th>Tanggal</th><th>Siswa</th><th>Jenis</th><th>Tingkat</th><th>Poin</th><th>Status</th></tr></thead>
+        ${rows.length ? `<table class="table">
+          <thead><tr><th>Tanggal</th><th>Peserta Didik</th><th>Kelas</th><th>Jenis</th><th>Kategori</th><th>Status</th></tr></thead>
           <tbody>
-            ${rows.map(({ student, violation }) => `<tr><td>${formatDate(violation[0])}</td><td>${student.name}</td><td>${violation[1]}</td><td>${badge(violation[2])}</td><td><strong>+${violation[3]}</strong></td><td>${badge(violation[4])}</td></tr>`).join("")}
+            ${rows.map(({ student, violation }) => `<tr><td>${formatDate(violation[0])}</td><td>${student.name}</td><td>${classFor(student)}</td><td>${violation[1]}</td><td>${badge(violation[2])}</td><td>${badge(violation[3])}</td></tr>`).join("")}
           </tbody>
-        </table>
+        </table>` : emptyState("Belum ada pelanggaran", "Data peserta didik sudah masuk dan catatan pelanggaran masih kosong.")}
       </div>
     </section>
   `;
 }
 
 function violationTable(rows) {
+  if (!rows.length) {
+    return emptyState("Belum ada pelanggaran", "Peserta didik ini belum memiliki catatan pelanggaran.");
+  }
   return `
-    <div class="note info"><i class="fa-solid fa-circle-info"></i><div>Ambang saat ini: 0-25 Aman, 26-50 Perlu Perhatian, 51-100 Konseling BK, 101-150 Panggilan Orang Tua, 151-200 Home Visit.</div></div>
     <div class="table-wrap">
       <table class="table">
-        <thead><tr><th>Tanggal</th><th>Jenis</th><th>Tingkat</th><th>Poin</th><th>Status</th></tr></thead>
+        <thead><tr><th>Tanggal</th><th>Jenis</th><th>Kategori</th><th>Status</th></tr></thead>
         <tbody>
-          ${rows.map((row) => `<tr><td>${formatDate(row[0])}</td><td>${row[1]}</td><td>${badge(row[2])}</td><td><strong>+${row[3]}</strong></td><td>${badge(row[4])}</td></tr>`).join("")}
+          ${rows.map((row) => `<tr><td>${formatDate(row[0])}</td><td>${row[1]}</td><td>${badge(row[2])}</td><td>${badge(row[3])}</td></tr>`).join("")}
         </tbody>
       </table>
     </div>
@@ -964,6 +974,8 @@ function violationTable(rows) {
 }
 
 function renderCounseling() {
+  const visibleIds = visibleStudentIds();
+  const notes = state.counselingNotes.filter((note) => visibleIds.has(note.studentId));
   qs("#view-konseling").innerHTML = `
     <div class="page-head">
       <div>
@@ -985,9 +997,9 @@ function renderCounseling() {
         <div class="panel-body">
           <form class="form-grid" id="counselingForm">
             <div class="form-field">
-              <label for="counselStudent">Siswa</label>
+              <label for="counselStudent">Peserta Didik</label>
               <select class="field-select" id="counselStudent" required>
-                ${students.map((student) => `<option value="${student.id}" ${student.id === state.activeStudentId ? "selected" : ""}>${student.name} - ${student.className}</option>`).join("")}
+                ${visibleStudents().map((student) => `<option value="${student.id}" ${student.id === state.activeStudentId ? "selected" : ""}>${student.name} - ${classFor(student)}</option>`).join("")}
               </select>
             </div>
             <div class="form-field">
@@ -1014,7 +1026,7 @@ function renderCounseling() {
             </div>
             <div class="form-field full">
               <label for="counselFollowUp">Tindak lanjut</label>
-              <textarea class="field-area" id="counselFollowUp" required placeholder="Contoh: koordinasi wali asrama, monitoring kehadiran, atau jadwal sesi lanjutan."></textarea>
+              <textarea class="field-area" id="counselFollowUp" required placeholder="Contoh: koordinasi wali kelas, monitoring kehadiran, atau jadwal sesi lanjutan."></textarea>
             </div>
             <div class="form-field full">
               <button class="button primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Simpan Catatan</button>
@@ -1030,10 +1042,10 @@ function renderCounseling() {
           </div>
         </div>
         <div class="panel-body timeline">
-          ${state.counselingNotes.map((note) => {
+          ${notes.map((note) => {
             const student = getStudent(note.studentId);
             return eventRow(note.date, `${student.name} - ${note.area}`, note.followUp, `${badge(note.status)} <button class="button ghost" data-open-confidential="${note.id}"><i class="fa-solid fa-lock"></i> Buka Isi</button>`);
-          }).join("")}
+          }).join("") || emptyState("Belum ada riwayat konseling", "Catatan akan muncul setelah disimpan.")}
         </div>
       </section>
     </div>
@@ -1073,7 +1085,7 @@ function renderReports() {
     </div>
     <div class="grid-3">
       ${reportCard("Rekap Bulanan BK", "Statistik konseling, pelanggaran, home visit, dan surat.", "downloadMonthlyReport")}
-      ${reportCard("Daftar Prioritas", "Siswa dengan risiko layanan tertinggi dan tindak lanjut.", "downloadPriorityReport")}
+      ${reportCard("Catatan Pelanggaran", "Peserta didik yang memiliki catatan pelanggaran.", "downloadPriorityReport")}
       ${reportCard("Audit Akses", "Aktivitas akses data sensitif dan privasi.", "downloadAuditReport")}
     </div>
   `;
@@ -1120,7 +1132,7 @@ function renderAccessCodes() {
             <div class="form-field">
               <label for="accessScope">Cakupan</label>
               <select class="field-select" id="accessScope" required>
-                ${[...new Set(students.map((student) => student.className))].map((className) => `<option value="${className}">Kelas ${className}</option>`).join("")}
+                ${rombels.map((className) => `<option value="${className}">Kelas ${className}</option>`).join("")}
                 <option value="AGREGAT">Laporan agregat sekolah</option>
               </select>
             </div>
@@ -1230,8 +1242,8 @@ function downloadCsv(filename, rows) {
 
 function exportStudents() {
   const rows = [
-    ["NIS", "Nama", "Kelas", "Asrama", "Kehadiran", "Poin", "Status", "Tahap"],
-    ...filteredStudents().map((student) => [student.nis, student.name, student.className, student.dorm, student.attendance, student.points, student.risk, student.stage])
+    ["NIS", "Nama", "Kelas", "Kehadiran", "Catatan Pelanggaran", "Status"],
+    ...filteredStudents().map((student) => [student.nis, student.name, classFor(student), student.attendance, violationsFor(student).length, riskFor(student)])
   ];
   downloadCsv("rimbawan-bk-data-siswa.csv", rows);
 }
@@ -1246,16 +1258,36 @@ function handleReports(action) {
     return;
   }
   if (action === "downloadPriorityReport") {
-    const rows = visibleStudents().filter((student) => student.points > 50);
-    downloadCsv("rimbawan-bk-prioritas.csv", [["Nama", "Kelas", "Asrama", "Poin", "Tahap"], ...rows.map((student) => [effectiveScope().type === "aggregate" ? "Agregat" : student.name, student.className, student.dorm, student.points, student.stage])]);
+    const rows = visibleStudents().filter((student) => violationsFor(student).length > 0);
+    downloadCsv("rimbawan-bk-catatan-pelanggaran.csv", [["Nama", "Kelas", "Jumlah Catatan", "Status"], ...rows.map((student) => [effectiveScope().type === "aggregate" ? "Agregat" : student.name, classFor(student), violationsFor(student).length, riskFor(student)])]);
     return;
   }
   const data = visibleStudents();
   const ids = visibleStudentIds();
-  downloadCsv("rimbawan-bk-rekap-bulanan.csv", [["Metrik", "Nilai"], ["Total Siswa", data.length], ["Konseling", state.counselingNotes.filter((note) => ids.has(note.studentId)).length], ["Surat", can("manage_letters") ? letters.length : "Ringkasan"], ["Pelanggaran", data.reduce((sum, student) => sum + student.violations.length, 0)]]);
+  downloadCsv("rimbawan-bk-rekap-bulanan.csv", [["Metrik", "Nilai"], ["Total Peserta Didik", data.length], ["Konseling", state.counselingNotes.filter((note) => ids.has(note.studentId)).length], ["Surat", can("manage_letters") ? letters.length : "Ringkasan"], ["Pelanggaran", data.reduce((sum, student) => sum + violationsFor(student).length, 0)]]);
 }
 
 document.addEventListener("click", (event) => {
+  const profileMenuButton = event.target.closest("#profileMenuButton");
+  const profilePopover = qs("#profilePopover");
+  if (profileMenuButton && profilePopover) {
+    const willOpen = !profilePopover.classList.contains("open");
+    profilePopover.classList.toggle("open", willOpen);
+    profileMenuButton.setAttribute("aria-expanded", String(willOpen));
+    return;
+  }
+
+  if (profilePopover && !event.target.closest("#profilePopover") && !profileMenuButton) {
+    profilePopover.classList.remove("open");
+    qs("#profileMenuButton")?.setAttribute("aria-expanded", "false");
+  }
+
+  const togglePanel = event.target.closest("[data-toggle-panel]");
+  if (togglePanel) {
+    const panel = qs(`#${togglePanel.dataset.togglePanel}`);
+    if (panel) panel.hidden = !panel.hidden;
+  }
+
   const fillCode = event.target.closest("[data-fill-code]");
   if (fillCode) {
     qs("#loginCode").value = fillCode.dataset.fillCode;
@@ -1282,6 +1314,7 @@ document.addEventListener("click", (event) => {
   if (routeGo) {
     location.hash = `#${routeGo.dataset.routeGo}`;
     qs("#app").classList.remove("nav-open");
+    if (profilePopover) profilePopover.classList.remove("open");
   }
 
   const openStudent = event.target.closest("[data-open-student]");
@@ -1339,17 +1372,12 @@ document.addEventListener("input", (event) => {
   if (event.target.id === "globalSearch" && (activeRoute === "siswa" || activeRoute === "dashboard")) {
     activeRoute === "siswa" ? renderStudents() : renderDashboard();
   }
-  if (event.target.id === "pointInput") {
-    const value = Number(event.target.value || 0);
-    qs("#pointResult span").textContent = `${value} poin masuk tahap ${pointStage(value)}.`;
-  }
 });
 
 document.addEventListener("change", (event) => {
-  if (event.target.id === "riskFilter" || event.target.id === "dormFilter") {
+  if (event.target.id === "classFilter") {
     state.filters = {
-      risk: qs("#riskFilter")?.value || "all",
-      dorm: qs("#dormFilter")?.value || "all"
+      className: qs("#classFilter")?.value || "all"
     };
     saveState();
     renderStudents();
@@ -1368,7 +1396,7 @@ document.addEventListener("submit", (event) => {
     state.sessionRole = matched.role;
     state.sessionCodeId = matched.id;
     if (matched.scope.type === "class") {
-      const firstStudent = students.find((student) => student.className === matched.scope.value);
+      const firstStudent = allStudents().find((student) => classFor(student) === matched.scope.value);
       if (firstStudent) state.activeStudentId = firstStudent.id;
     }
     addAudit("Login dengan kode akses", matched.owner, "Login");
@@ -1402,6 +1430,117 @@ document.addEventListener("submit", (event) => {
     saveState();
     renderAccessCodes();
     showToast("Kode akses baru tersimpan.");
+    return;
+  }
+
+  if (event.target.id === "studentForm") {
+    event.preventDefault();
+    const name = qs("#studentName").value.trim();
+    const phone = "";
+    const newStudent = {
+      id: `SIS-${Date.now()}`,
+      nis: qs("#studentNis").value.trim(),
+      name,
+      initials: initialsFromName(name),
+      className: qs("#studentClass").value,
+      dorm: "-",
+      room: "-",
+      gender: qs("#studentGender").value,
+      attendance: 100,
+      points: 0,
+      risk: "Aktif",
+      stage: "Belum Ada Pelanggaran",
+      phoneMasked: maskContact(phone),
+      phoneFull: phone || "-",
+      emailMasked: "-",
+      emailFull: "-",
+      parentPhoneMasked: "-",
+      parentPhoneFull: "-",
+      notes: qs("#studentNotes").value.trim() || "Belum ada catatan awal BK.",
+      violations: [],
+      academics: []
+    };
+    state.customStudents = [newStudent, ...(state.customStudents || [])];
+    state.activeStudentId = newStudent.id;
+    addAudit("Menambah peserta didik", `${newStudent.name} - ${newStudent.className}`, "Data Peserta Didik");
+    saveState();
+    showToast("Peserta didik baru tersimpan di prototype.");
+    renderStudents();
+    return;
+  }
+
+  if (event.target.id === "classEditForm") {
+    event.preventDefault();
+    const studentId = event.target.dataset.studentId;
+    const newClass = qs("#studentNewClass").value;
+    state.studentClassOverrides = state.studentClassOverrides || {};
+    state.studentClassOverrides[studentId] = newClass;
+    addAudit("Mengubah kelas peserta didik", `${getStudent(studentId).name} - ${newClass}`, "Data Peserta Didik");
+    saveState();
+    showToast("Kelas peserta didik diperbarui.");
+    renderProfile();
+    return;
+  }
+
+  if (event.target.id === "subjectForm") {
+    event.preventDefault();
+    const studentId = event.target.dataset.studentId;
+    const row = [
+      qs("#subjectName").value.trim(),
+      Number(qs("#subjectKkm").value || 75),
+      Number(qs("#subjectScore").value || 0)
+    ];
+    state.studentSubjects = state.studentSubjects || {};
+    state.studentSubjects[studentId] = [row, ...(state.studentSubjects[studentId] || [])];
+    addAudit("Menambah mata pelajaran", `${getStudent(studentId).name} - ${row[0]}`, "Akademik");
+    saveState();
+    showToast("Mata pelajaran ditambahkan.");
+    renderProfile();
+    return;
+  }
+
+  if (event.target.id === "violationForm") {
+    event.preventDefault();
+    const studentId = event.target.dataset.studentId;
+    const row = [
+      qs("#violationDate").value,
+      qs("#violationType").value.trim(),
+      qs("#violationLevel").value,
+      qs("#violationStatus").value
+    ];
+    state.studentViolations = state.studentViolations || {};
+    state.studentViolations[studentId] = [row, ...(state.studentViolations[studentId] || [])];
+    addAudit("Menambah pelanggaran", `${getStudent(studentId).name} - ${row[1]}`, "Pelanggaran");
+    saveState();
+    showToast("Pelanggaran ditambahkan.");
+    renderProfile();
+    return;
+  }
+
+  if (event.target.id === "documentForm") {
+    event.preventDefault();
+    const studentId = event.target.dataset.studentId;
+    const selected = [...event.target.querySelectorAll("input[type='file']")]
+      .filter((input) => input.files && input.files[0])
+      .map((input) => {
+        const file = input.files[0];
+        return {
+          type: input.dataset.docType,
+          name: file.name,
+          size: `${Math.max(1, Math.round(file.size / 1024))} KB`,
+          savedAt: nowStamp()
+        };
+      });
+    if (!selected.length) {
+      showToast("Pilih minimal satu file terlebih dahulu.");
+      return;
+    }
+    state.studentDocuments = state.studentDocuments || {};
+    state.studentDocuments[studentId] = [...selected, ...(state.studentDocuments[studentId] || [])];
+    addAudit("Menyimpan file biodata", `${getStudent(studentId).name} - ${selected.map((item) => item.type).join(", ")}`, "Dokumen");
+    saveState();
+    showToast("File biodata tercatat di prototype.");
+    renderProfile();
     return;
   }
 
